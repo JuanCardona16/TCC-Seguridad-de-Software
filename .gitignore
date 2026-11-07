@@ -18,3 +18,5 @@ lab/gateway/tls/
 .DS_Store
 *.swp
 __pycache__/
+evidence/network/*.pid
+evidence/http/replay/
