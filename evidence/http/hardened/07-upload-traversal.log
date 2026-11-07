@@ -1,0 +1,2 @@
+POST /docs con filename=../../tmp/tcc-traversal-proof.txt -> HTTP 303
+BLOQUEADO: el nombre se descarta y el archivo se guarda con nombre opaco

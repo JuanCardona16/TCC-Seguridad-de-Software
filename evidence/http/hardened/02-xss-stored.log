@@ -1,0 +1,3 @@
+POST /docs con titulo malicioso -> HTTP 303
+BLOQUEADO: el titulo sale escapado (&lt;script&gt;)
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/hardened/02-dashboard.html

@@ -1,0 +1,3 @@
+GET /search?q=<payload UNION SELECT> -> HTTP 200
+BLOQUEADO: la consulta parametrizada trato el payload como texto
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/hardened/01-sqli-search.html

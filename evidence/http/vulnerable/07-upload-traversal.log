@@ -1,0 +1,2 @@
+POST /docs con filename=../../tmp/tcc-traversal-proof.txt -> HTTP 303
+ATAQUE EXITOSO: el archivo se escribio fuera de /data/docs (/tmp/tcc-traversal-proof.txt)

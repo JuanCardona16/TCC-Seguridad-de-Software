@@ -1,0 +1,3 @@
+GET /search?q=<payload UNION SELECT> -> HTTP 200
+ATAQUE EXITOSO: la inyeccion devolvio hashes de contrasenas
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/vulnerable/01-sqli-search.html

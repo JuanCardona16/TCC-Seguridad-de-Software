@@ -1,0 +1,1 @@
+documento de prueba para XSS almacenado

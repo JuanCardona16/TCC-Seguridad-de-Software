@@ -1,0 +1,3 @@
+GET /admin/users con cookie forjada 'sid=alice:admin' -> HTTP 200
+ATAQUE EXITOSO: una cookie en texto plano otorgo el rol de administrador
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/vulnerable/05-admin-forjado.html

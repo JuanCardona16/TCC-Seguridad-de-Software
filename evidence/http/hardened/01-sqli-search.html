@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buscar · MiniGestor Documental</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--panel2:#1c2330;--line:#30363d;--txt:#e6edf3;--muted:#8b949e;--acc:#58a6ff;--bad:#f85149;--warn:#d29922;--ok:#3fb950}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px 60px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel);margin-bottom:26px}
+header.top .wrap{padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand small{color:var(--muted);font-weight:400;margin-left:8px}
+nav{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;font-size:14px}
+nav .who{color:var(--muted)}
+.banner{padding:10px 20px;font:600 13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.2px}
+.banner.bad{background:#3d1114;color:#ffb3ae;border-bottom:1px solid var(--bad)}
+.banner.ok{background:#0f2f1b;color:#9ae6b4;border-bottom:1px solid var(--ok)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}
+h1{font-size:22px;margin:0 0 14px}h2{font-size:17px;margin:22px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input,textarea,select{width:100%;padding:9px 11px;background:#0b0f14;border:1px solid var(--line);border-radius:7px;color:var(--txt);font:inherit}
+input[type=file]{padding:7px}
+button{margin-top:16px;padding:10px 18px;border:0;border-radius:7px;background:var(--acc);color:#04121f;font:600 14px/1 inherit;cursor:pointer}
+button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line)}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.tag.confidencial{background:#4a1d1f;color:#ffb3ae}
+.tag.sensible{background:#4a3410;color:#f5d78e}
+.tag.publico,.tag.interno{background:#1b2b40;color:#a3c9f7}
+.err{background:#3d1114;border:1px solid var(--bad);color:#ffb3ae;padding:10px 13px;border-radius:7px;margin-bottom:14px;font-size:14px}
+.note{color:var(--muted);font-size:13px}
+pre{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;font-size:13px;line-height:1.5;white-space:pre-wrap}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:#0b0f14;padding:1px 5px;border-radius:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.kv{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kv b{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:36px}
+.secret{font-family:ui-monospace,monospace;font-size:20px;letter-spacing:3px;color:var(--ok)}
+</style>
+</head>
+<body>
+<div class="banner ok">MODO ENDURECIDO · Argon2id · AES-256-GCM · sesión firmada · RBAC verificado en servidor · CSP</div>
+<header class="top"><div class="wrap"><span class="brand">MiniGestor<small>Documental · laboratorio de seguridad</small></span><nav><a href="/dashboard">Panel</a><a href="/search">Buscar</a><a href="/docs">Subir</a><a href="/account/2fa">2FA</a><span class="who">bob</span><form method="post" action="/logout" style="display:inline"><button class="ghost" style="margin:0;padding:2px 10px;font-size:12px">Salir</button></form></nav></div></header>
+<main class="wrap">
+<div class="card">
+<h1>Buscar documentos</h1>
+<form method="get" action="/search">
+<label for="q">Término</label>
+<input id="q" name="q" value="&#x27; UNION SELECT 1, username, password_hash, &#x27;x&#x27;, 0, &#x27;y&#x27; FROM users -- " placeholder="contrato, política, historia...">
+<button type="submit">Buscar</button>
+</form>
+<p class="note">Resultados para: <b>&#x27; UNION SELECT 1, username, password_hash, &#x27;x&#x27;, 0, &#x27;y&#x27; FROM users -- </b> · 0 coincidencia(s)</p>
+<table><thead><tr><th>Título</th><th>Dueño</th><th>Archivo</th></tr></thead><tbody><tr><td colspan="3" class="note">Sin resultados.</td></tr></tbody></table>
+</div>
+<footer>MiniGestor Documental · TCC Seguridad Informática 2026-2 · datos simulados, sin información real · modo: endurecido</footer>
+</main>
+</body>
+</html>

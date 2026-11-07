@@ -1,0 +1,3 @@
+GET /docs/1 como bob (documento de alice) -> HTTP 403
+BLOQUEADO: el servidor verifico la propiedad del recurso (HTTP 403)
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/hardened/03-idor-doc1.html

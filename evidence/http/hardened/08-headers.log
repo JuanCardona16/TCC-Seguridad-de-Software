@@ -1,0 +1,6 @@
+  presente: content-security-policy
+  presente: x-frame-options
+  presente: x-content-type-options
+  presente: referrer-policy
+BLOQUEADO: todas las cabeceras de seguridad estan presentes
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/hardened/08-headers.txt

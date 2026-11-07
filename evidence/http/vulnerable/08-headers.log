@@ -1,0 +1,6 @@
+  AUSENTE:  content-security-policy
+  AUSENTE:  x-frame-options
+  AUSENTE:  x-content-type-options
+  AUSENTE:  referrer-policy
+ATAQUE EXITOSO: faltan controles de endurecimiento del navegador: content-security-policy x-frame-options x-content-type-options referrer-policy
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/vulnerable/08-headers.txt

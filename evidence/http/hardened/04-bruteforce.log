@@ -1,0 +1,9 @@
+intento 1 con contrasena incorrecta -> HTTP 429
+intento 2 con contrasena incorrecta -> HTTP 429
+intento 3 con contrasena incorrecta -> HTTP 429
+intento 4 con contrasena incorrecta -> HTTP 429
+intento 5 con contrasena incorrecta -> HTTP 429
+intento 6 con contrasena incorrecta -> HTTP 429
+intento 7 con contrasena incorrecta -> HTTP 429
+intento 8 con contrasena incorrecta -> HTTP 429
+BLOQUEADO: la aplicacion limito o bloqueo los intentos

@@ -1,0 +1,3 @@
+POST /docs con titulo malicioso -> HTTP 303
+ATAQUE EXITOSO: el titulo se renderiza como HTML crudo (XSS almacenado)
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/vulnerable/02-dashboard.html

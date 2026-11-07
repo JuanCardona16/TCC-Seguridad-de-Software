@@ -1,0 +1,3 @@
+GET /admin/users con cookie forjada 'sid=alice:admin' -> HTTP 303
+BLOQUEADO: la sesion firmada no valida y el rol se revalida en el servidor
+evidence=/home/juancardona/Projects/tcc-seguridad/evidence/http/hardened/05-admin-forjado.html
