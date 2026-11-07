@@ -1,0 +1,189 @@
+# Análisis de riesgos — método MAGERIT v3 (versión ligera para el TCC)
+#
+# Escala del laboratorio: frecuencia y degradación de 1 a 5.
+# Riesgo = frecuencia × degradación  ->  rango 1..25
+#   Crítico (>=16) · Alto (9..15) · Medio (4..8) · Bajo (<=3)
+#
+# Cada riesgo está trazado a: el defecto concreto (v1), la salvaguarda aplicada
+# (v2) y el ataque que lo demuestra (attacks/NN-*.sh).
+
+metodo: MAGERIT v3 (escala simplificada 1-5)
+fecha: 2026-11-06
+alcance: MiniGestor Documental en su despliegue de laboratorio (Docker local)
+
+activos:
+  - id: A1
+    nombre: Servicio web de gestión documental
+    tipo: "[S] servicio"
+    dimensiones: [Disponibilidad, Integridad, Confidencialidad]
+    critico: true
+  - id: A2
+    nombre: Base de datos PostgreSQL (usuarios, metadatos, auditoría)
+    tipo: "[D] datos"
+    dimensiones: [Confidencialidad, Integridad, Disponibilidad]
+    critico: true
+  - id: A3
+    nombre: Documentos almacenados (contratos, historias clínicas simuladas)
+    tipo: "[I] información"
+    dimensiones: [Confidencialidad, Integridad]
+    critico: true
+  - id: A4
+    nombre: Credenciales, secretos de sesión y clave maestra de cifrado
+    tipo: "[K] claves"
+    dimensiones: [Confidencialidad]
+    critico: true
+  - id: A5
+    nombre: Red del laboratorio y gateway TLS
+    tipo: "[COM] comunicaciones"
+    dimensiones: [Confidencialidad, Integridad]
+    critico: false
+  - id: A6
+    nombre: Código fuente y artefactos de construcción
+    tipo: "[SW] software"
+    dimensiones: [Integridad]
+    critico: false
+
+riesgos:
+  - id: R1
+    activo: A2
+    amenaza: Inyección de código SQL en la búsqueda de documentos
+    causa: "Concatenación del término de búsqueda dentro de la sentencia SQL (v1)"
+    frecuencia: 5
+    degradacion: 5
+    owasp: A03:2021 Injection
+    ataque: attacks/01-sqli-search.sh
+    salvaguarda: Consulta parametrizada con enlace de parámetros y escape de salida
+    control_v2: app/src/routes/docs_routes.rs (bloque Mode::Hardened de /search)
+    riesgo_residual: Bajo
+
+  - id: R2
+    activo: A3
+    amenaza: Lectura de documentos de otro usuario (IDOR)
+    causa: "El manejador /docs/{id} no compara el dueño del recurso (v1)"
+    frecuencia: 5
+    degradacion: 5
+    owasp: A01:2021 Broken Access Control
+    ataque: attacks/03-idor.sh
+    salvaguarda: Verificación de propiedad o rol administrador en cada acceso + auditoría
+    control_v2: app/src/routes/docs_routes.rs (doc_view, doc_download)
+    riesgo_residual: Bajo
+
+  - id: R3
+    activo: A1
+    amenaza: XSS almacenado y reflejado
+    causa: "Títulos y términos de búsqueda interpolados sin escape de salida (v1)"
+    frecuencia: 4
+    degradacion: 4
+    owasp: A03:2021 Injection
+    ataque: attacks/02-xss-stored.sh
+    salvaguarda: Escape de salida centralizado, CSP sin scripts y cookies HttpOnly
+    control_v2: app/src/views.rs (interp) + app/src/security.rs
+    riesgo_residual: Bajo
+
+  - id: R4
+    activo: A2
+    amenaza: Recuperación de contraseñas a partir de hashes débiles
+    causa: "MD5 sin sal para almacenar contraseñas y política de contraseñas débil (v1)"
+    frecuencia: 5
+    degradacion: 5
+    owasp: A02:2021 Cryptographic Failures
+    ataque: attacks/06-weak-hash.sh
+    salvaguarda: Argon2id (19 MiB, t=2, p=1) con sal única por usuario
+    control_v2: app/src/auth.rs (hash_password)
+    riesgo_residual: Medio
+
+  - id: R5
+    activo: A4
+    amenaza: Falsificación de sesión y escalada de privilegios
+    causa: "Cookie con usuario y rol en texto plano, sin firma ni estado en servidor (v1)"
+    frecuencia: 5
+    degradacion: 5
+    owasp: A01:2021 Broken Access Control
+    ataque: attacks/05-session-forgery.sh
+    salvaguarda: Identificador opaco + firma HMAC-SHA256 + tabla de sesiones con expiración y rol revalidado
+    control_v2: app/src/session.rs + app/src/auth.rs
+    riesgo_residual: Bajo
+
+  - id: R6
+    activo: A1
+    amenaza: Fuerza bruta y credential stuffing contra el inicio de sesión
+    causa: "Sin límite de intentos, sin bloqueo de cuenta y mensajes que enumeran usuarios (v1)"
+    frecuencia: 5
+    degradacion: 4
+    owasp: A07:2021 Identification and Authentication Failures
+    ataque: attacks/04-bruteforce.sh
+    salvaguarda: Ventana de 5 intentos/minuto, bloqueo temporal de 5 minutos, respuesta genérica, limit_req en el gateway y segundo factor TOTP
+    control_v2: app/src/security.rs + app/src/routes/auth_routes.rs + lab/gateway/nginx.conf
+    riesgo_residual: Bajo
+
+  - id: R7
+    activo: A3
+    amenaza: Exposición de documentos en reposo
+    causa: "Archivos en claro con nombre predecible dentro del volumen (v1)"
+    frecuencia: 4
+    degradacion: 5
+    owasp: A02:2021 Cryptographic Failures
+    ataque: attacks/07-upload-traversal.sh
+    salvaguarda: AES-256-GCM con nonce aleatorio por documento y nombre opaco generado por el servidor
+    control_v2: app/src/crypto.rs + app/src/routes/docs_routes.rs (upload)
+    riesgo_residual: Bajo
+
+  - id: R8
+    activo: A3
+    amenaza: Escritura arbitraria de archivos (path traversal)
+    causa: "El nombre del archivo lo envía el cliente y se usa como ruta (v1)"
+    frecuencia: 4
+    degradacion: 4
+    owasp: A04:2021 Insecure Design
+    ataque: attacks/07-upload-traversal.sh
+    salvaguarda: Lista blanca de extensiones, límite de 5 MiB y nombre opaco
+    control_v2: app/src/routes/docs_routes.rs (upload_submit, sanitize_filename)
+    riesgo_residual: Bajo
+
+  - id: R9
+    activo: A4
+    amenaza: Exposición de secretos por endpoint de depuración
+    causa: "GET /debug/config sin autenticación devuelve la cadena de conexión y las claves (v1)"
+    frecuencia: 3
+    degradacion: 5
+    owasp: A05:2021 Security Misconfiguration
+    ataque: attacks/08-headers.sh
+    salvaguarda: El endpoint no existe en el binario endurecido; configuración por variables de entorno
+    control_v2: app/src/routes/mod.rs (solo se registra en Mode::Vulnerable)
+    riesgo_residual: Bajo
+
+  - id: R10
+    activo: A5
+    amenaza: Interceptación de credenciales en tránsito (MITM)
+    causa: "HTTP sin TLS; cookies sin Secure ni HSTS (v1)"
+    frecuencia: 4
+    degradacion: 5
+    owasp: A02:2021 Cryptographic Failures
+    ataque: attacks/09-tls-plaintext.sh
+    salvaguarda: TLS 1.2/1.3 en el gateway, redirección 301, HSTS, cookies Secure + HttpOnly + SameSite
+    control_v2: lab/gateway/nginx.conf + app/src/session.rs
+    riesgo_residual: Bajo
+
+  - id: R11
+    activo: A1
+    amenaza: Ausencia de trazabilidad y detección de incidentes
+    causa: "Sin registro de eventos de seguridad ni monitoreo (v1)"
+    frecuencia: 4
+    degradacion: 3
+    owasp: A09:2021 Security Logging and Monitoring Failures
+    ataque: attacks/08-headers.sh
+    salvaguarda: Tabla audit_log con actor, acción, objetivo y resultado + panel administrativo
+    control_v2: app/src/db.rs (audit) + app/src/routes/admin_routes.rs
+    riesgo_residual: Medio
+
+  - id: R12
+    activo: A6
+    amenaza: Configuración insegura del navegador (clickjacking, sniffing, fugas de referer)
+    causa: "Sin cabeceras de endurecimiento (v1)"
+    frecuencia: 3
+    degradacion: 3
+    owasp: A05:2021 Security Misconfiguration
+    ataque: attacks/08-headers.sh
+    salvaguarda: CSP, X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy, Permissions-Policy
+    control_v2: app/src/security.rs (hardening_headers)
+    riesgo_residual: Bajo

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="860" viewBox="0 0 1240 860" role="img" aria-labelledby="titulo-dfd">
+  <title id="titulo-dfd">Flujo de datos y amenazas STRIDE de MiniGestor Documental</title>
+  <defs>
+    <marker id="af" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#8b949e"/>
+    </marker>
+    <marker id="af-r" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#f85149"/>
+    </marker>
+  </defs>
+
+  <rect width="1240" height="860" fill="#0d1117"/>
+
+  <text x="40" y="46" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="24" font-weight="700">
+    Flujo de datos y amenazas (STRIDE)
+  </text>
+  <text x="40" y="72" fill="#8b949e" font-family="system-ui, sans-serif" font-size="14">
+    Cada flujo marcado en rojo es el que la suite de ataques explota en el modo vulnerable
+  </text>
+
+  <!-- entidad externa -->
+  <rect x="40" y="200" width="180" height="300" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+  <text x="60" y="230" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Usuario</text>
+  <text x="60" y="252" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">navegador / auditor</text>
+  <text x="60" y="286" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· ingresa credenciales</text>
+  <text x="60" y="306" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· busca y lee documentos</text>
+  <text x="60" y="326" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sube archivos</text>
+  <text x="60" y="346" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· administra usuarios</text>
+
+  <!-- procesos -->
+  <rect x="350" y="130" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+  <text x="368" y="158" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">1 · Autenticación</text>
+  <text x="368" y="180" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">verifica contraseña · TOTP · emite sesión</text>
+  <text x="368" y="200" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: MD5, cookie usuario:rol, sin límites</text>
+
+  <rect x="350" y="250" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+  <text x="368" y="278" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">2 · Consulta de documentos</text>
+  <text x="368" y="300" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">búsqueda, lectura y renderizado HTML</text>
+  <text x="368" y="320" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: SQL concatenado, sin escape, sin dueño</text>
+
+  <rect x="350" y="370" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+  <text x="368" y="398" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">3 · Carga de documentos</text>
+  <text x="368" y="420" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">valida, nombra y persiste el archivo</text>
+  <text x="368" y="440" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: nombre del cliente como ruta</text>
+
+  <rect x="350" y="490" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+  <text x="368" y="518" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">4 · Descarga y auditoría</text>
+  <text x="368" y="540" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">decide autorización y registra el evento</text>
+  <text x="368" y="560" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: sin autorización ni registro</text>
+
+  <!-- almacenes -->
+  <rect x="760" y="130" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+  <text x="778" y="158" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D1 · users</text>
+  <text x="778" y="180" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">credenciales, rol, secreto TOTP</text>
+  <text x="778" y="200" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">contadores de intentos</text>
+
+  <rect x="760" y="250" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+  <text x="778" y="278" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D2 · documents + archivos</text>
+  <text x="778" y="300" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">metadatos y contenido</text>
+  <text x="778" y="320" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">volumen /data/docs</text>
+
+  <rect x="760" y="490" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+  <text x="778" y="518" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D3 · audit_log</text>
+  <text x="778" y="540" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">actor, acción, objetivo, resultado</text>
+  <text x="778" y="560" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">solo existe uso en v2</text>
+
+  <!-- flujos -->
+  <path d="M220 245 L350 175" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="232" y="196" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F1 credenciales</text>
+
+  <path d="M620 175 L760 175" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="618" y="164" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F2 hash</text>
+
+  <path d="M220 285 L350 295" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="222" y="286" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F3 término de búsqueda</text>
+
+  <path d="M620 295 L760 295" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="628" y="284" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F4 SQL</text>
+
+  <path d="M220 400 L350 415" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="222" y="392" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F5 archivo + nombre</text>
+
+  <path d="M620 415 L760 340" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="628" y="392" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F6 escritura</text>
+
+  <path d="M760 320 L620 330" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
+  <text x="650" y="348" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F7 contenido + HTML</text>
+
+  <path d="M620 535 L760 535" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#af)"/>
+  <text x="628" y="524" fill="#3fb950" font-family="ui-monospace, monospace" font-size="11">F8 evento (v2)</text>
+
+  <path d="M220 480 L350 520" stroke="#8b949e" stroke-width="1.6" fill="none" marker-end="url(#af)"/>
+  <text x="222" y="516" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">F9 descarga</text>
+
+  <!-- tabla STRIDE -->
+  <rect x="40" y="620" width="1160" height="200" rx="10" fill="#161b22" stroke="#30363d"/>
+  <text x="60" y="650" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Amenazas identificadas por flujo (STRIDE)</text>
+
+  <text x="60" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">FLUJO</text>
+  <text x="150" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">STRIDE</text>
+  <text x="290" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">AMENAZA</text>
+  <text x="800" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">DEFECTO (v1)</text>
+  <text x="1060" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">ATAQUE</text>
+
+  <text x="60" y="706" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F1</text>
+  <text x="150" y="706" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Spoofing</text>
+  <text x="290" y="706" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Suplantación de usuario y fuerza bruta</text>
+  <text x="800" y="706" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">sin límite, mensajes que enumeran</text>
+  <text x="1060" y="706" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">04-bruteforce</text>
+
+  <text x="60" y="728" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F2/F7</text>
+  <text x="150" y="728" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Information disclosure</text>
+  <text x="290" y="728" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Hashes y documentos expuestos</text>
+  <text x="800" y="728" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">MD5 sin sal, archivos en claro</text>
+  <text x="1060" y="728" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">06-weak-hash</text>
+
+  <text x="60" y="750" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F3/F4</text>
+  <text x="150" y="750" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Tampering · Elevation</text>
+  <text x="290" y="750" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Inyección SQL y lectura sin autorización</text>
+  <text x="800" y="750" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">SQL concatenado, sin verificar dueño</text>
+  <text x="1060" y="750" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">01-sqli / 03-idor</text>
+
+  <text x="60" y="772" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F3/F7</text>
+  <text x="150" y="772" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Elevation (cliente)</text>
+  <text x="290" y="772" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Ejecución de script en el navegador de la víctima</text>
+  <text x="800" y="772" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">salida sin escapar, cookie sin HttpOnly</text>
+  <text x="1060" y="772" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">02-xss</text>
+
+  <text x="60" y="794" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F5/F6</text>
+  <text x="150" y="794" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Tampering</text>
+  <text x="290" y="794" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Escritura de archivos fuera del almacén</text>
+  <text x="800" y="794" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">nombre del cliente usado como ruta</text>
+  <text x="1060" y="794" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">07-traversal</text>
+
+  <text x="60" y="816" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F8</text>
+  <text x="150" y="816" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Repudiation</text>
+  <text x="290" y="816" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Imposibilidad de reconstruir quién hizo qué</text>
+  <text x="800" y="816" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">sin audit_log en v1</text>
+  <text x="1060" y="816" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">08-headers</text>
+</svg>
