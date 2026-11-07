@@ -52,10 +52,10 @@ que no se resuelve con código.
 | T6 | MAGERIT v3 ligero: activos, amenazas, riesgo = probabilidad × impacto, mapa de calor y salvaguardas mapeadas a los controles del código | S2, S3 | inline | `2a2b783` |
 | T7 | Diagramas: arquitectura segura y DFD con amenazas (STRIDE) en SVG dentro del repo | S3 | inline | `2a2b783` |
 | T8 | Sitio interactivo de evidencias en `127.0.0.1:18090`: matriz antes/después con log real, mapa de calor, inventario y diagramas | S6 | inline | `2b40a48` |
-| T9 | Firewall y monitoreo: `nftables` en contenedor + regla de detección de intentos de intrusión | S4 | inline | — |
-| T10 | Documento final Markdown → PDF siguiendo la plantilla del curso (pedirla al tutor si no aparece) | S1, S5 | inline | — |
-| T11 | Deck de sustentación de 10 min + guion por rol + video de demo de respaldo | S5, S8 | inline | — |
-| T12 | Empaquetado del entregable: README reproducible, scripts, capturas y carpeta de evidencias listas para subir | S1, S6 | inline | — |
+| T9 | Firewall y monitoreo: `nftables` en contenedor + regla de detección de intentos de intrusión | S4 | inline | `f3390ca` |
+| T10 | Documento final Markdown → PDF con la estructura de la actividad (la plantilla oficial depende del tutor) | S1, S5 | inline | `f3390ca` |
+| T11 | Deck de sustentación de 10 min + guion por rol (el video de respaldo lo graba la CIPA) | S5, S8 | inline | `f3390ca` |
+| T12 | Empaquetado del entregable: `scripts/empaquetar.sh` + `CHECKLIST-ENTREGA.md` | S1, S6 | inline | `f3390ca` |
 | T13 | Escribir al tutor por el avance del 31/10 y pedir plantilla + criterios de rúbrica | S10, S1 | humano | — |
 
 ## Log
@@ -90,5 +90,16 @@ V1 completa al 2026-11-06 (todo verificado sobre el laboratorio levantado):
 - Código: 2.174 líneas de Rust/HTML/shell propias en `app/` y 1.334 en `attacks/`, `site/` y
   `docs/riesgos/`; 241 dependencias de Rust fijadas en `Cargo.lock`.
 
-Pendiente: T9 (firewall como evidencia ejecutada), T10 (informe final), T11 (sustentación),
-T12 (empaquetado) y T13 (correo al tutor, depende del usuario).
+Estado final de la ejecución (2026-11-06): **T1–T12 completas y verificadas**; queda T13, que depende
+del usuario (correo al tutor) y dos pendientes humanos: reemplazar los nombres de los integrantes y
+grabar el video de respaldo de la demo.
+
+Verificaciones finales:
+- `bash attacks/run-all.sh` → 18 PASS / 0 FAIL / 0 SKIP (segunda corrida tras las correcciones).
+- Panel de evidencias: `/healthz` 200, matriz 18/18, 12 riesgos, diagramas servidos, path traversal 404,
+  estado vacío 200.
+- Informe: PDF de 414 KB generado con pandoc + Chromium; texto extraíble y verificable con `pdftotext`.
+- Entregable: `dist/TCC-seguridad-informatica-2026-2.zip` (130 archivos, 369 KB) generado por
+  `scripts/empaquetar.sh`, que se niega a empaquetar si hay expectativas fallidas.
+- Firewall: ruleset `lab/firewall/lab.nft` cargado y volcado en `evidence/firewall-ruleset.txt`.
+- Seis commits en la rama `feat/tcc-seguridad`.
