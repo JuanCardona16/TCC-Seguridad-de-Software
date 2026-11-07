@@ -35,6 +35,12 @@ Uso: marcar cada casilla antes de subir. Las rutas son relativas a la raíz del 
 - [ ] Implementación y simulación: cifrado, autenticación, firewall, pentesting y seguridad web.
 - [ ] Documentación del proceso, las pruebas y los resultados → informe + panel de evidencias.
 
+## Antes de la sustentación
+
+- [ ] `./parar.sh --todo && ./arrancar.sh` funciona desde cero en el equipo que se va a usar.
+- [ ] El panel abre con la presentación del proyecto y los tres integrantes.
+- [ ] Al menos un ataque ejecutado con ▶ en los dos modos, con la evidencia visible en pantalla.
+
 ## Sustentación (21 de noviembre de 2026)
 
 - [ ] `docs/sustentacion/slides.html` abierto y probado en el equipo de presentación.

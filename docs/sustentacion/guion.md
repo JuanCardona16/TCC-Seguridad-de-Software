@@ -120,13 +120,12 @@ Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:
 
 ```bash
 cd ~/Projects/tcc-seguridad
-docker compose up -d --build
-docker compose --profile tools up -d attacker
-bash attacks/run-all.sh                      # debe cerrar en 18 PASS
-docker compose restart evidence
-xdg-open http://127.0.0.1:18090              # panel listo
-xdg-open docs/sustentacion/slides.html       # diapositivas (F = pantalla completa)
+./arrancar.sh                              # compila, levanta, verifica 18/18 y abre el panel
+xdg-open docs/sustentacion/slides.html     # diapositivas (F = pantalla completa)
 ```
+
+Si algo quedó raro de una prueba anterior: `./parar.sh --todo && ./arrancar.sh` deja el laboratorio
+de cero en dos minutos.
 
 - [ ] Los cinco contenedores en estado `Up` (`docker compose ps`).
 - [ ] Panel abierto y con fecha de la última corrida visible.

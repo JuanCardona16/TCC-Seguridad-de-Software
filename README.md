@@ -16,15 +16,55 @@ instaladas en el host.
 
 ---
 
-## 1. Arranque rápido
+## 1. Arranque con un solo comando
 
-Requisitos: Docker + Docker Compose (probado con Docker 29.9 / Compose 5.6).
+```bash
+./arrancar.sh
+```
+
+Hace todo en orden: comprueba Docker y que los puertos estén libres, compila la imagen, levanta los
+seis contenedores, espera a que cada servicio responda, ejecuta la suite de ataques, refresca el panel
+y lo abre en el navegador. Si algo falla, dice qué pasó y con qué comando mirar los registros.
+
+| Comando | Para qué |
+|---|---|
+| `./arrancar.sh` | arranque completo: unos 2 min la primera vez, 45 s con la imagen ya compilada |
+| `./arrancar.sh --sin-pruebas` | arranque rápido (~20 s) sin volver a correr la suite |
+| `./arrancar.sh --sin-navegador` | no abre el navegador |
+| `./arrancar.sh --limpiar` | laboratorio de cero: borra contenedores y volúmenes antes de arrancar |
+| `./parar.sh` | apaga y conserva los datos |
+| `./parar.sh --todo` | apaga y borra los volúmenes |
+
+Salida esperada:
+
+```
+▸ Comprobando el entorno
+  ✓ Docker 29.9.2 disponible
+  ✓ Docker Compose 5.6.1
+  ✓ puertos 18080, 18083, 18090, 18091 y 18443 libres
+▸ Compilando la aplicación
+▸ Levantando los servicios
+▸ Esperando a que los servicios estén sanos
+  ✓ aplicación vulnerable responde
+  ✓ aplicación endurecida (TLS) responde
+  ✓ panel de evidencias responde
+▸ Ejecutando la suite de ataques
+  ✓ las 18 expectativas se cumplieron
+▸ Refrescando el panel con las evidencias actuales
+```
+
+Lo único que hace falta tener instalado es Docker con el plugin `compose`: el repositorio no necesita
+Rust, Python ni herramientas de seguridad en el host, porque todo corre en contenedores.
+
+### Arranque manual (equivalente, paso por paso)
 
 ```bash
 git clone <repo> tcc-seguridad && cd tcc-seguridad
-docker compose up -d --build          # levanta base de datos, app v1, app v2 y gateway TLS
-docker compose ps                     # estado de los servicios
-bash attacks/run-all.sh               # ejecuta la suite de ataques y genera las evidencias
+docker compose up -d --build                    # base, app v1, app v2, gateway TLS y panel
+docker compose --profile tools up -d            # herramientas de red (tcpdump) para el ataque 09
+docker compose ps                               # estado de los servicios
+bash attacks/run-all.sh                         # suite de ataques y evidencias
+docker compose restart evidence                 # refresca el panel con los resultados nuevos
 ```
 
 | Servicio | URL local | Qué es |

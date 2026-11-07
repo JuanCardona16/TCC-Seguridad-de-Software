@@ -1,7 +1,7 @@
-  admin -> $argon2id$v=19$m=19456,t=2,p=1$XyWxsKY+msal7aTnypBOtg$NDpICd7ffFJF71pH45SIo9ragIoLWWdfhJCl2jzqm+8
+  admin -> $argon2id$v=19$m=19456,t=2,p=1$SP/gg/LQhei3VUDpEEGt3A$b7CN7t08X+0wEpH7ZARXas1fSBozM4/HLNbwGocqnxs
   formato Argon2id: cada intento cuesta 19 MiB de RAM y 2 iteraciones
-  alice -> $argon2id$v=19$m=19456,t=2,p=1$bRPZ3S8TZUYMx1LVUCZkiw$BShLbxgl/SjDc3leSyQEbj6NhLOb8QrydWVrdd1HU6g
+  alice -> $argon2id$v=19$m=19456,t=2,p=1$kf+LIIjTIJGtfa8D5Ia3ig$rpRMWj8Re89FiHMuaTkjlTsxOIiZITbdfsjk2+u4/Us
   formato Argon2id: cada intento cuesta 19 MiB de RAM y 2 iteraciones
-  bob -> $argon2id$v=19$m=19456,t=2,p=1$s+qRl9/FG75DwWfKrsc35g$h6NUDzcHFUqwIm02TJJQP+9xJF/weze29L5fITcbZh4
+  bob -> $argon2id$v=19$m=19456,t=2,p=1$IzAvWD5f0ljEmqG8COj+ww$w4O+lfFeWc/tUbJIrMIe6s/+C0T6bJbGGa60LB73sJA
   formato Argon2id: cada intento cuesta 19 MiB de RAM y 2 iteraciones
 BLOQUEADO: Argon2id con sal por usuario no cede al diccionario
