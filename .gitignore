@@ -21,3 +21,5 @@ __pycache__/
 evidence/network/*.pid
 evidence/http/replay/
 site/static/data/
+dist/
+docs/informe/*.html

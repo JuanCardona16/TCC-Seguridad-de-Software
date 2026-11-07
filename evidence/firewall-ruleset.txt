@@ -1,0 +1,22 @@
+table inet lab {
+	set bloqueos {
+		type ipv4_addr
+		flags dynamic,timeout
+		timeout 10m
+	}
+
+	chain entrada {
+		type filter hook input priority filter; policy drop;
+		ct state established,related accept
+		ct state invalid drop
+		iif "lo" accept
+		icmp type echo-request accept
+		ip saddr 172.28.60.0/24 tcp dport 443 accept
+		limit rate 10/minute burst 5 packets log prefix "lab-drop: "
+		counter packets 1 bytes 72 drop
+	}
+
+	chain salida {
+		type filter hook output priority filter; policy accept;
+	}
+}

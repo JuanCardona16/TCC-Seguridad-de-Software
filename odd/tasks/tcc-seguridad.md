@@ -44,14 +44,14 @@ que no se resuelve con código.
 
 | ID | Tarea | Specs | Ruta | Commit |
 |----|-------|-------|------|--------|
-| T1 | Scaffold del repo, `docker compose` con red aislada, Postgres, modo doble y README con advertencias | S6, S9 | inline | — |
-| T2 | App Rust v1 deliberadamente vulnerable (MD5, SQLi, XSS, IDOR, cookie forjable, upload sin validar, sin rate limit, `/debug/config`) | S2, S7 | inline | — |
-| T3 | App Rust v2 endurecida (Argon2id, AES-256-GCM, sesión firmada + tabla `sessions`, TOTP, RBAC real, validación de upload, rate limit + lockout, cabeceras/CSP, auditoría, nginx TLS) | S2, S4 | inline | — |
-| T4 | Suite de ataques ejecutable como spec: cada ataque debe tener éxito en v1 (RED) y quedar bloqueado en v2 (GREEN), con `evidence/results.json` | S2, S4 | inline | — |
-| T5 | Evidencia de red: `tcpdump` en el bridge → `.pcap` con credenciales en claro (HTTP) vs cifradas (TLS) + demo de ARP spoofing en el bridge | S2, S4 | inline | — |
-| T6 | MAGERIT v3 ligero: activos, amenazas, riesgo = probabilidad × impacto, mapa de calor y salvaguardas mapeadas a los controles del código | S2, S3 | inline | — |
-| T7 | Diagramas: arquitectura segura y DFD con amenazas (STRIDE) en SVG dentro del repo | S3 | inline | — |
-| T8 | Sitio interactivo de evidencias (servicio Rust, `127.0.0.1:8090`): antes/después, mapa de calor, replay de ataques, diffs v1↔v2, `.pcap` y métricas | S6 | inline | — |
+| T1 | Scaffold del repo, `docker compose` con red aislada, Postgres, modo doble y README con advertencias | S6, S9 | inline | `dfc7ed3` |
+| T2 | App Rust v1 deliberadamente vulnerable (MD5, SQLi, XSS, IDOR, cookie forjable, upload sin validar, sin rate limit, `/debug/config`) | S2, S7 | inline | `b37aa91` |
+| T3 | App Rust v2 endurecida (Argon2id, AES-256-GCM, sesión firmada + tabla `sessions`, TOTP, RBAC real, validación de upload, rate limit + lockout, cabeceras/CSP, auditoría, nginx TLS) | S2, S4 | inline | `b37aa91` |
+| T4 | Suite de ataques ejecutable como spec: cada ataque debe tener éxito en v1 (RED) y quedar bloqueado en v2 (GREEN), con `evidence/results.json` | S2, S4 | inline | `9f67da2` |
+| T5 | Evidencia de red: `tcpdump` en el bridge → `.pcap` con credenciales en claro (HTTP) vs cifradas (TLS); ARP spoofing queda como receta documentada | S2, S4 | inline | `9f67da2` |
+| T6 | MAGERIT v3 ligero: activos, amenazas, riesgo = probabilidad × impacto, mapa de calor y salvaguardas mapeadas a los controles del código | S2, S3 | inline | `2a2b783` |
+| T7 | Diagramas: arquitectura segura y DFD con amenazas (STRIDE) en SVG dentro del repo | S3 | inline | `2a2b783` |
+| T8 | Sitio interactivo de evidencias en `127.0.0.1:18090`: matriz antes/después con log real, mapa de calor, inventario y diagramas | S6 | inline | `2b40a48` |
 | T9 | Firewall y monitoreo: `nftables` en contenedor + regla de detección de intentos de intrusión | S4 | inline | — |
 | T10 | Documento final Markdown → PDF siguiendo la plantilla del curso (pedirla al tutor si no aparece) | S1, S5 | inline | — |
 | T11 | Deck de sustentación de 10 min + guion por rol + video de demo de respaldo | S5, S8 | inline | — |
@@ -75,3 +75,20 @@ L2 (decisiones del usuario, verbatim):
 L3 (evidencia de entorno, 2026-11-06): i5-12450HX, 12 hilos, 7.5 GiB RAM (3.8 GiB libres), 151 GB libres, VT-x
 activo, Docker 29.9.2 + Compose 5.6.1, sin toolchain Rust en el host, sin VirtualBox/libvirt, sin pandoc.
 Decisión: se compila dentro de Docker (imagen `rust:1-slim-bookworm`); no se instala nada en el host.
+
+## Evidencia de ejecución
+
+V1 completa al 2026-11-06 (todo verificado sobre el laboratorio levantado):
+
+- Laboratorio operativo: `tcc-db`, `tcc-vuln` (:18080), `tcc-hard` (:18091), `tcc-gateway`
+  (:18443 TLS, :18083 redirección), `tcc-evidence` (:18090), `tcc-attacker` (perfil tools).
+- Suite de ataques: **18/18 PASS** (9 ataques × 2 modos, sin fallos ni omisiones) →
+  `evidence/results.json`.
+- Panel de evidencias: `/healthz` 200, `/data/results.json` con `{total:18, pass:18, fail:0,
+  skip:0}`, `/data/magerit.json` con 12 riesgos y 6 activos, diagramas servidos, intento de
+  path traversal del panel devuelve 404 y el estado vacío devuelve 200.
+- Código: 2.174 líneas de Rust/HTML/shell propias en `app/` y 1.334 en `attacks/`, `site/` y
+  `docs/riesgos/`; 241 dependencias de Rust fijadas en `Cargo.lock`.
+
+Pendiente: T9 (firewall como evidencia ejecutada), T10 (informe final), T11 (sustentación),
+T12 (empaquetado) y T13 (correo al tutor, depende del usuario).

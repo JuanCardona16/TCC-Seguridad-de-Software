@@ -7,6 +7,11 @@
 # política de filtrado que sí se aplica en la arquitectura: publicar solo
 # 127.0.0.1, cerrar todo lo que no sea el gateway TLS y registrar los intentos
 # de conexión rechazados.
+#
+# NOTA DE DESPLIEGUE: el contenedor instala nftables con apk en cada arranque, por eso
+# necesita salida a Internet al iniciar. En un entorno sin red se debe construir una
+# imagen propia con el paquete incluido. Esa dependencia está declarada como limitación
+# en el informe (§3.3).
 
 flush ruleset
 

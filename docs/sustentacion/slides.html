@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sustentación · TCC Seguridad Informática 2026-2</title>
+<style>
+  :root {
+    --bg: #0b1017;
+    --panel: #121a24;
+    --line: #24303e;
+    --txt: #eef3f8;
+    --muted: #93a4b8;
+    --acc: #58a6ff;
+    --bad: #ff6b60;
+    --ok: #45d17f;
+    --warn: #f0b429;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--txt);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .deck { height: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+  .slide {
+    min-width: 100%; height: 100%; scroll-snap-align: start;
+    padding: 56px 72px; display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .slide::after {
+    content: attr(data-n); position: absolute; right: 40px; bottom: 28px;
+    color: #33465c; font: 700 12px/1 ui-monospace, monospace;
+  }
+  h1 { font-size: 42px; line-height: 1.15; margin: 0 0 18px; letter-spacing: -.8px; max-width: 22ch; }
+  h2 { font-size: 34px; line-height: 1.2; margin: 0 0 26px; letter-spacing: -.6px; }
+  p { font-size: 19px; line-height: 1.6; color: #c9d6e4; max-width: 62ch; margin: 0 0 14px; }
+  .lead { font-size: 22px; color: #dce7f2; }
+  .kicker { color: var(--acc); font: 700 13px/1 ui-monospace, monospace; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 18px; }
+  .muted { color: var(--muted); font-size: 16px; }
+  ul { font-size: 19px; line-height: 1.65; color: #c9d6e4; padding-left: 22px; margin: 0; }
+  li { margin-bottom: 10px; }
+  li b { color: #fff; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em;
+    background: #1a2632; padding: 2px 7px; border-radius: 5px; color: #9ae6b4; }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 18px; }
+  .card p { font-size: 15px; margin: 0; color: var(--muted); }
+  .bad { color: var(--bad); } .ok { color: var(--ok); } .warn { color: var(--warn); }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; margin-top: 8px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  td.pass { color: var(--ok); font-weight: 700; }
+  .big { font-size: 76px; font-weight: 800; line-height: 1; letter-spacing: -2px; }
+  .stat { display: flex; gap: 44px; margin-top: 26px; }
+  .stat span { color: var(--muted); font-size: 14px; display: block; }
+  figure { margin: 0; }
+  figure img { width: 100%; max-height: 68vh; object-fit: contain; border-radius: 12px;
+    border: 1px solid var(--line); background: #0d1117; }
+  .cmd { background: #0f1620; border: 1px solid var(--line); border-left: 3px solid var(--ok);
+    border-radius: 10px; padding: 14px 18px; font-family: ui-monospace, monospace; font-size: 15px;
+    line-height: 1.8; color: #9ae6b4; white-space: pre-wrap; }
+  .nota { border-left: 3px solid var(--warn); padding-left: 16px; color: #e8d9a8; font-size: 17px; }
+  .ayuda { position: fixed; left: 24px; bottom: 22px; color: #2f4053;
+    font: 600 11px/1 ui-monospace, monospace; }
+  @media print {
+    .deck { display: block; overflow: visible; }
+    .slide { min-height: 100vh; page-break-after: always; }
+    .ayuda { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <section class="slide" data-n="1">
+    <div class="kicker">Trabajo Colaborativo Contextualizado · Seguridad Informática 2026-2</div>
+    <h1>De la aplicación insegura a la aplicación endurecida</h1>
+    <p class="lead">MiniGestor Documental: auditoría, explotación y mitigación con evidencia reproducible.</p>
+    <p class="muted">CIPA de 3 integrantes · Rust + Docker · 20 de noviembre de 2026</p>
+    <div class="stat">
+      <div><div class="big ok">18/18</div><span>expectativas cumplidas</span></div>
+      <div><div class="big">9</div><span>ataques automatizados</span></div>
+      <div><div class="big">4</div><span>enfoques del curso</span></div>
+    </div>
+  </section>
+
+  <section class="slide" data-n="2">
+    <div class="kicker">El problema</div>
+    <h2>Un documento ajeno a un <code>curl</code> de distancia</h2>
+    <ul>
+      <li><b>Gestión documental sin controles:</b> contratos, historias clínicas y nóminas en la misma base.</li>
+      <li><b>Autorización en la interfaz, no en el servidor:</b> ocultar un botón no es un permiso.</li>
+      <li><b>Hashes obsoletos y secretos en el código:</b> una brecha se convierte en contraseñas.</li>
+      <li><b>Sin trazabilidad:</b> cuando no hay registro, el ataque es indistinguible del uso normal.</li>
+    </ul>
+    <p class="nota">Afirmar «acá nadie entraría» no es un control de seguridad. Lo es medirlo.</p>
+  </section>
+
+  <section class="slide" data-n="3">
+    <div class="kicker">La propuesta</div>
+    <h2>Un binario, dos políticas de seguridad</h2>
+    <div class="grid g2">
+      <div class="card" style="border-color:#5b2622">
+        <h3 class="bad">MODE=vulnerable · :18080</h3>
+        <p>MD5 sin sal · cookie <code>usuario:rol</code> en texto plano · SQL concatenado · salida sin escapar · sin verificación de dueño · upload con nombre del cliente · <code>/debug/config</code> expuesto</p>
+      </div>
+      <div class="card" style="border-color:#20573a">
+        <h3 class="ok">MODE=hardened · :18443 TLS</h3>
+        <p>Argon2id · sesión opaca firmada con HMAC-SHA256 · consultas parametrizadas · escape de salida + CSP · RBAC revalidado · AES-256-GCM en reposo · TOTP · auditoría</p>
+      </div>
+    </div>
+    <p style="margin-top:22px">Mismo esquema de datos, mismas rutas, mismas pruebas: cambian <b>solo</b> las decisiones de seguridad. Las dos instancias usan bases separadas para que el «después» no herede el estado del «antes».</p>
+  </section>
+
+  <section class="slide" data-n="4">
+    <div class="kicker">Diseño</div>
+    <h2>Arquitectura del laboratorio</h2>
+    <figure><img src="../diagramas/arquitectura.svg" alt="Arquitectura del laboratorio"></figure>
+    <p class="muted">Todo publicado solo en <code>127.0.0.1</code>; la base de datos no expone ningún puerto.</p>
+  </section>
+
+  <section class="slide" data-n="5">
+    <div class="kicker">Cobertura</div>
+    <h2>Los cuatro enfoques del curso, en un solo sistema</h2>
+    <div class="grid g4">
+      <div class="card"><h3>OWASP Top 10</h3><p>A01, A02, A03, A04, A05, A07 y A09, cada uno con su defecto y su control.</p></div>
+      <div class="card"><h3>Criptografía</h3><p>MD5 → Argon2id, AES-256-GCM, HMAC-SHA256, TOTP (RFC 6238), TLS 1.2/1.3.</p></div>
+      <div class="card"><h3>Riesgos</h3><p>MAGERIT v3 en escala 1–5: 6 activos, 12 riesgos, salvaguardas trazadas al código.</p></div>
+      <div class="card"><h3>Ataques de red</h3><p><code>tcpdump</code> en el bridge: credenciales en claro por HTTP vs cifradas por TLS.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-n="6">
+    <div class="kicker">Modelado de amenazas</div>
+    <h2>STRIDE sobre el flujo de datos</h2>
+    <figure><img src="../diagramas/dfd-stride.svg" alt="Flujo de datos y amenazas STRIDE"></figure>
+  </section>
+
+  <section class="slide" data-n="7">
+    <div class="kicker">Análisis de riesgos</div>
+    <h2>Riesgo = frecuencia × degradación</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Amenaza</th><th>F</th><th>D</th><th>R</th><th>Nivel</th><th>Salvaguarda</th></tr></thead>
+      <tbody>
+        <tr><td>R1</td><td>Inyección SQL</td><td>5</td><td>5</td><td>25</td><td class="bad">Crítico</td><td>Consulta parametrizada</td></tr>
+        <tr><td>R2</td><td>Lectura de documentos ajenos</td><td>5</td><td>5</td><td>25</td><td class="bad">Crítico</td><td>Verificación de propiedad</td></tr>
+        <tr><td>R4</td><td>Hash de contraseña débil</td><td>5</td><td>5</td><td>25</td><td class="bad">Crítico</td><td>Argon2id</td></tr>
+        <tr><td>R5</td><td>Falsificación de sesión</td><td>5</td><td>5</td><td>25</td><td class="bad">Crítico</td><td>HMAC + sesión en servidor</td></tr>
+        <tr><td>R10</td><td>Interceptación (MITM)</td><td>4</td><td>5</td><td>20</td><td class="bad">Crítico</td><td>TLS + HSTS + Secure</td></tr>
+        <tr><td>R11</td><td>Falta de trazabilidad</td><td>4</td><td>3</td><td>12</td><td class="warn">Alto</td><td>audit_log</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:16px">El mapa de calor completo (5×5) se explora en el panel interactivo.</p>
+  </section>
+
+  <section class="slide" data-n="8">
+    <div class="kicker">Método</div>
+    <h2>La suite de ataques es la especificación</h2>
+    <div class="cmd">attacks/NN-ataque.sh &lt;url&gt; &lt;vulnerable|hardened&gt;
+  exit 0  → el ataque funcionó    (el defecto está presente)
+  exit 1  → el ataque fue bloqueado (la mitigación funciona)
+  exit 2  → la prueba no pudo ejecutarse</div>
+    <p style="margin-top:22px">Nueve ataques × dos modos = <b>18 expectativas</b>. Si una falla, el informe no puede afirmar que la mitigación sirve. El resultado se consolida en <code>evidence/results.json</code> y el panel lo muestra sin intervención manual.</p>
+  </section>
+
+  <section class="slide" data-n="9">
+    <div class="kicker">Resultados</div>
+    <h2>18 de 18: rojo en v1, verde en v2</h2>
+    <table>
+      <thead><tr><th>Ataque</th><th>OWASP</th><th>Vulnerable</th><th>Endurecido</th></tr></thead>
+      <tbody>
+        <tr><td>SQL injection en la búsqueda</td><td>A03</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>XSS almacenado</td><td>A03</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>IDOR en /docs/{id}</td><td>A01</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Fuerza bruta en /login</td><td>A07</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Falsificación de cookie</td><td>A01</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Hashes débiles</td><td>A02</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Path traversal en la carga</td><td>A04</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Cabeceras ausentes</td><td>A05</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+        <tr><td>Credenciales en claro</td><td>A02</td><td class="bad">Éxito</td><td class="pass">Bloqueado</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-n="10">
+    <div class="kicker">Demostración en vivo</div>
+    <h2>Tres minutos, dos terminales y un panel</h2>
+    <div class="cmd">bash attacks/03-idor.sh http://127.0.0.1:18080 vulnerable   → exit 0
+bash attacks/03-idor.sh https://127.0.0.1:18443 hardened     → exit 1</div>
+    <div class="grid g2" style="margin-top:22px">
+      <div class="card"><h3>La cookie es el permiso</h3><p><code>Cookie: sid=alice:admin</code> abre el panel administrativo en v1 y falla en v2.</p></div>
+      <div class="card"><h3>El hash es el eslabón débil</h3><p>Tres contraseñas MD5 recuperadas en menos de un segundo; Argon2id no cede al diccionario.</p></div>
+    </div>
+    <p class="muted" style="margin-top:18px">Respaldo: video grabado de la demo, por si falla la red o el proyector.</p>
+  </section>
+
+  <section class="slide" data-n="11">
+    <div class="kicker">Hallazgos</div>
+    <h2>Lo que más enseñó el trabajo</h2>
+    <ul>
+      <li><b>El defecto más grave no fue criptográfico:</b> fue de diseño de autorización. AES-256-GCM con control de acceso ausente sigue entregando documentos ajenos, solo que cifrados en disco.</li>
+      <li><b>La suite encontró dos errores en la propia suite</b> (16/18 en la primera corrida): una sentencia SQL en varias líneas y el carácter <code>&lt;</code> que <code>curl -F</code> interpreta como «leer archivo». Corregirlos llevó a 18/18.</li>
+      <li><b>La captura de tráfico convierte una sospecha en prueba:</b> la contraseña se lee en el <code>.pcap</code> por HTTP y no existe en claro sobre TLS.</li>
+    </ul>
+  </section>
+
+  <section class="slide" data-n="12">
+    <div class="kicker">Conclusiones</div>
+    <h2>Se puede demostrar, no solo afirmar</h2>
+    <ul>
+      <li>El endurecimiento se prueba con evidencia reproducible: un comando regenera las 18 ejecuciones.</li>
+      <li>Los cuatro enfoques del curso forman una cadena: <b>priorizar → verificar → corregir → detectar</b>.</li>
+      <li>La doble versión sobre un mismo código es el mejor recurso didáctico: defecto, mitigación y prueba en el mismo archivo.</li>
+      <li>Riesgo residual asumido: contraseñas débiles (se mitiga con política y 2FA) y auditoría local sin SIEM.</li>
+    </ul>
+  </section>
+
+  <section class="slide" data-n="13">
+    <div class="kicker">Cierre</div>
+    <h2>Distribución de roles y preguntas</h2>
+    <div class="grid g4">
+      <div class="card"><h3>Integrante 1</h3><p>Líder y riesgos: MAGERIT, arquitectura, STRIDE, informe.</p></div>
+      <div class="card"><h3>Integrante 2</h3><p>Desarrollo: aplicación Rust, criptografía, sesiones, TOTP.</p></div>
+      <div class="card"><h3>Integrante 3</h3><p>Pentesting: suite de ataques, capturas, panel, sustentación.</p></div>
+      <div class="card"><h3>Repositorio</h3><p><code>docker compose up</code> levanta todo el laboratorio; <code>bash attacks/run-all.sh</code> regenera la evidencia.</p></div>
+    </div>
+    <p class="nota" style="margin-top:24px">Gracias. ¿Preguntas?</p>
+  </section>
+
+</div>
+<div class="ayuda">← → para navegar · F para pantalla completa · Ctrl+P exporta a PDF</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const total = deck.querySelectorAll('.slide').length;
+  let actual = 0;
+
+  function ir(i) {
+    actual = Math.max(0, Math.min(total - 1, i));
+    deck.scrollTo({ left: actual * deck.clientWidth, behavior: 'smooth' });
+  }
+
+  document.addEventListener('keydown', (evento) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(evento.key)) { evento.preventDefault(); ir(actual + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(evento.key)) { evento.preventDefault(); ir(actual - 1); }
+    if (evento.key === 'Home') ir(0);
+    if (evento.key === 'End') ir(total - 1);
+    if (evento.key.toLowerCase() === 'f') {
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => ir(actual));
+  window.addEventListener('resize', () => ir(actual));
+</script>
+</body>
+</html>
