@@ -137,6 +137,24 @@ services:
     networks: [lab_net]
     logging: *default-logging
 
+  # Panel interactivo de evidencias (sitio estático generado desde el repo).
+  evidence:
+    build:
+      context: ./site
+    image: tcc-seguridad/evidence:latest
+    container_name: tcc-evidence
+    ports:
+      - "127.0.0.1:18090:8000"
+    volumes:
+      - ./:/repo:ro
+    networks: [lab_net]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/healthz.txt')"]
+      interval: 10s
+      timeout: 4s
+      retries: 12
+    logging: *default-logging
+
 volumes:
   pgdata:
   docs_vuln:

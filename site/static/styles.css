@@ -1,0 +1,179 @@
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel2: #1c2330;
+  --line: #30363d;
+  --txt: #e6edf3;
+  --muted: #8b949e;
+  --acc: #58a6ff;
+  --bad: #f85149;
+  --warn: #d29922;
+  --ok: #3fb950;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 22px; }
+
+a { color: var(--acc); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header.top {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+header.top .wrap {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 14px 22px;
+  flex-wrap: wrap;
+}
+.brand strong { font-size: 17px; display: block; letter-spacing: .2px; }
+.brand span { color: var(--muted); font-size: 12.5px; }
+nav.links { margin-left: auto; display: flex; gap: 16px; font-size: 14px; }
+
+.hero { padding: 40px 0 10px; }
+.hero h1 { font-size: 30px; line-height: 1.25; margin: 0 0 14px; letter-spacing: -.4px; }
+.lead { color: #b6c2cf; max-width: 860px; font-size: 15.5px; }
+.lead .v { color: #ffb3ae; }
+.lead .h { color: #9ae6b4; }
+
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 6px; }
+.chip {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 104px;
+}
+.chip b { display: block; font-size: 22px; line-height: 1.2; }
+.chip span { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .7px; }
+.chip.ok b { color: var(--ok); }
+.chip.bad b { color: var(--bad); }
+.chip.warn b { color: var(--warn); }
+
+section { padding: 34px 0 6px; }
+section h2 { font-size: 21px; margin: 0 0 10px; letter-spacing: -.2px; }
+section h3 { font-size: 15.5px; margin: 24px 0 8px; }
+.note { color: var(--muted); font-size: 13px; margin: 6px 0 14px; }
+
+.section-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.filtros { margin-left: auto; display: flex; gap: 6px; }
+.filtro {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 6px 13px;
+  border-radius: 99px;
+  font: 600 12.5px/1 inherit;
+  cursor: pointer;
+}
+.filtro.activo { background: var(--acc); border-color: var(--acc); color: #04121f; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th {
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #12171e; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+th.col-v { color: #ffb3ae; }
+th.col-h { color: #9ae6b4; }
+
+.veredicto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--txt);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font: 700 11.5px/1 ui-monospace, monospace;
+  cursor: pointer;
+}
+.veredicto.pass { border-color: #1f6f3f; color: #9ae6b4; }
+.veredicto.fail { border-color: #7d2420; color: #ffb3ae; }
+.veredicto.skip { border-color: #7a5c14; color: #f5d78e; }
+.veredicto:hover { filter: brightness(1.25); }
+
+.detalle { margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 16px 18px; }
+.detalle.oculto { display: none; }
+.detalle-head { display: flex; align-items: flex-start; gap: 12px; }
+.detalle-head h3 { margin: 0 0 4px; font-size: 15px; }
+.cerrar { margin-left: auto; background: transparent; border: 0; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; }
+pre {
+  background: #0b0f14;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  overflow: auto;
+  font: 12.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  color: #c9d1d9;
+}
+pre.comando { color: #9ae6b4; }
+
+.grid-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+@media (max-width: 900px) { .grid-dos { grid-template-columns: 1fr; } }
+
+.mapa { display: grid; grid-template-columns: 26px repeat(5, 1fr); grid-auto-rows: 46px; gap: 5px; }
+.mapa .eje {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font: 600 11px/1 ui-monospace, monospace;
+}
+.celda {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  font: 700 13px/1 ui-monospace, monospace;
+  cursor: pointer;
+  color: #0b0f14;
+}
+.celda.vacia { cursor: default; background: #10151c; border-style: dashed; }
+.celda.critico { background: #f85149; border-color: #ff8b84; }
+.celda.alto { background: #d29922; border-color: #f0c04a; }
+.celda.medio { background: #3fb950; border-color: #6fd486; }
+.celda.bajo { background: #1f6feb; border-color: #6aa8ff; color: #eaf2ff; }
+.celda.activa { outline: 2px solid var(--txt); outline-offset: 2px; }
+
+.leyenda { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; color: var(--muted); }
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+
+.lista-riesgos { display: flex; flex-direction: column; gap: 10px; }
+.tarjeta-riesgo { border: 1px solid var(--line); border-radius: 9px; background: var(--panel); padding: 12px 14px; }
+.tarjeta-riesgo header { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.tarjeta-riesgo .id { font: 700 11px/1 ui-monospace, monospace; color: var(--muted); }
+.tarjeta-riesgo .nivel { font: 700 10.5px/1 ui-monospace, monospace; padding: 3px 7px; border-radius: 99px; background: var(--panel2); }
+.tarjeta-riesgo p { margin: 4px 0; font-size: 13px; color: #c9d1d9; }
+.tarjeta-riesgo p b { color: var(--muted); font-weight: 600; }
+
+figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+figcaption { color: var(--muted); font-size: 12.5px; margin-bottom: 10px; }
+figure img { width: 100%; height: auto; display: block; border-radius: 7px; }
+
+footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 40px; margin-top: 40px; }

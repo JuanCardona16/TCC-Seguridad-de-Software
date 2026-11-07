@@ -20,3 +20,4 @@ lab/gateway/tls/
 __pycache__/
 evidence/network/*.pid
 evidence/http/replay/
+site/static/data/

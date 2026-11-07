@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel de evidencias · MiniGestor Documental</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <strong>MiniGestor Documental</strong>
+      <span>Panel de evidencias del TCC · Seguridad Informática 2026-2</span>
+    </div>
+    <nav class="links">
+      <a href="#matriz">Matriz</a>
+      <a href="#riesgos">Riesgos</a>
+      <a href="#diagramas">Diagramas</a>
+      <a href="#reproducir">Reproducir</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>De la aplicación insegura a la aplicación endurecida</h1>
+    <p class="lead">
+      Nueve ataques ejecutados contra dos modos del mismo binario. En el modo
+      <strong class="v">vulnerable</strong> cada ataque funciona; en el modo
+      <strong class="h">endurecido</strong> el mismo ataque queda bloqueado. Esta página se
+      genera desde <code>evidence/results.json</code>: no hay resultados escritos a mano.
+    </p>
+    <div id="resumen" class="chips"></div>
+  </section>
+
+  <section id="matriz">
+    <div class="section-head">
+      <h2>1 · Matriz antes / después</h2>
+      <div class="filtros" id="filtros">
+        <button class="filtro activo" data-filtro="todos">Todos</button>
+        <button class="filtro" data-filtro="vulnerable">Vulnerable</button>
+        <button class="filtro" data-filtro="endurecido">Endurecido</button>
+      </div>
+    </div>
+    <p class="note">Clic en un veredicto para ver la salida real de la prueba.</p>
+    <div class="table-wrap">
+      <table id="tabla-ataques">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ataque</th>
+            <th>OWASP Top 10 2021</th>
+            <th class="col-v">Vulnerable</th>
+            <th class="col-h">Endurecido</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="detalle" class="detalle oculto">
+      <div class="detalle-head">
+        <div>
+          <h3 id="detalle-titulo">Detalle</h3>
+          <p class="note" id="detalle-meta"></p>
+        </div>
+        <button class="cerrar" id="detalle-cerrar" aria-label="Cerrar">×</button>
+      </div>
+      <pre id="detalle-log"></pre>
+    </div>
+  </section>
+
+  <section id="riesgos">
+    <h2>2 · Análisis de riesgos (MAGERIT v3)</h2>
+    <p class="note" id="riesgos-meta"></p>
+
+    <div class="grid-dos">
+      <div>
+        <h3>Mapa de calor</h3>
+        <p class="note">Riesgo = frecuencia × degradación · clic en una celda para ver sus riesgos.</p>
+        <div id="mapa-calor" class="mapa"></div>
+        <div id="mapa-leyenda" class="leyenda"></div>
+      </div>
+      <div>
+        <h3>Riesgos seleccionados</h3>
+        <div id="mapa-detalle" class="lista-riesgos">
+          <p class="note">Elegí una celda del mapa.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Inventario de riesgos</h3>
+    <div class="table-wrap">
+      <table id="tabla-riesgos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Activo</th>
+            <th>Amenaza</th>
+            <th class="num">F</th>
+            <th class="num">D</th>
+            <th class="num">Riesgo</th>
+            <th>Nivel</th>
+            <th>Salvaguarda</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="diagramas">
+    <h2>3 · Diagramas</h2>
+    <div class="grid-dos">
+      <figure>
+        <figcaption>Arquitectura del laboratorio</figcaption>
+        <img src="data/diagramas/arquitectura.svg" alt="Diagrama de arquitectura del laboratorio">
+      </figure>
+      <figure>
+        <figcaption>Flujo de datos y amenazas (STRIDE)</figcaption>
+        <img src="data/diagramas/dfd-stride.svg" alt="Diagrama de flujo de datos con amenazas STRIDE">
+      </figure>
+    </div>
+  </section>
+
+  <section id="reproducir">
+    <h2>4 · Cómo se reproduce</h2>
+    <pre class="comando">docker compose up -d --build          # laboratorio: base, app v1, app v2 y gateway TLS
+bash attacks/run-all.sh               # ejecuta los nueve ataques y regenera las evidencias
+docker compose restart evidence       # refresca este panel con los resultados nuevos</pre>
+    <p class="note">
+      Un ataque individual: <code>bash attacks/03-idor.sh http://127.0.0.1:18080 vulnerable</code>
+    </p>
+  </section>
+
+  <footer>
+    Laboratorio local sobre 127.0.0.1 · datos simulados, sin información real ·
+    uso exclusivamente académico
+  </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
