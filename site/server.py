@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """Servidor del panel de evidencias: archivos estáticos + ejecución en vivo.
 
-Además de servir el panel, expone `POST /api/run/<ataque>` para que el docente
-pueda ejecutar un ataque delante del grupo y ver la salida real.
+El endpoint `POST /api/run/<ataque>` arranca el ataque en un hilo y devuelve un
+identificador de ejecución; el panel sigue el avance con
+`GET /api/run-progress/<run_id>`, que entrega las fases y las líneas de salida
+reales a medida que aparecen. El ritmo de revelado lo pone el navegador: el
+ataque real tarda milisegundos, la animación es didáctica.
 
 Guardas del ejecutor (servidor local de laboratorio):
 
   1. Token de sesión por proceso: el panel obtiene `/api/token` (sin CORS, no
      cacheable) y lo envía en `X-Panel-Token`. Una página de otro origen no puede
-     leer la respuesta de `/api/token`, así que no puede ejecutar nada (defensa
-     contra CSRF y DNS rebinding).
+     leer esa respuesta, así que no puede ejecutar nada (defensa contra CSRF y
+     DNS rebinding).
   2. Solo atiende peticiones cuyo encabezado `Host` sea 127.0.0.1/localhost.
   3. El identificador del ataque debe cumplir un patrón estricto Y estar en la
      lista blanca; nunca se compone un comando con texto del cliente.
   4. El modo debe ser exactamente "vulnerable" o "hardened".
-  5. Se ejecuta un único ataque a la vez (evita carreras y estados a medias).
+  5. Se ejecuta un único ataque a la vez.
   6. Cuerpo de la petición acotado, timeout con muerte del grupo de procesos y
      salida leída desde archivo (la memoria del proceso no crece con la salida).
   7. Directorio temporal y caché de cookies propios de cada ejecución, borrados
@@ -38,7 +41,7 @@ import time
 import uuid
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 REPO = Path(os.environ.get("REPO_ROOT", "/repo"))
 STATIC = Path("/site/static")
@@ -74,31 +77,128 @@ ID_PATTERN = re.compile(r"^[0-9]{2}-[a-z0-9-]+$")
 TIMEOUT_SECONDS = 120
 MAX_OUTPUT_CHARS = 8000
 MAX_BODY_BYTES = 4096
+MAX_LINEAS = 400
+MAX_RUNS = 20
 
 TOKEN = secrets.token_urlsafe(24)
 
 _ejecutando = threading.Lock()
+_runs: dict[str, "Ejecucion"] = {}
+_runs_lock = threading.Lock()
 
 
-def _tail(ruta: Path, limite: int) -> str:
-    """Devuelve los últimos `limite` bytes de un archivo, sin cargarlo entero."""
+def _mata_grupo(proceso: subprocess.Popen) -> None:
     try:
-        with open(ruta, "rb") as archivo:
-            archivo.seek(0, os.SEEK_END)
-            tamano = archivo.tell()
-            archivo.seek(max(0, tamano - limite))
-            datos = archivo.read()
-    except FileNotFoundError:
-        return ""
-
-    texto = datos.decode("utf-8", errors="replace")
-    if tamano > limite:
-        texto = f"[… {tamano - limite} bytes omitidos …]\n{texto}"
-    return texto
+        os.killpg(os.getpgid(proceso.pid), signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    try:
+        proceso.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        pass
 
 
-def ejecutar_ataque(ident: str, modo: str) -> dict:
-    """Ejecuta un ataque y devuelve salida, código y veredicto."""
+class Lector:
+    """Lee un archivo de salida de forma incremental y publica líneas completas."""
+
+    def __init__(self, ruta: Path, ejecucion: "Ejecucion", tipo: str) -> None:
+        self.ruta = ruta
+        self.ejecucion = ejecucion
+        self.tipo = tipo
+        self.offset = 0
+        self.resto = ""
+
+    def bombear(self) -> None:
+        try:
+            with open(self.ruta, "rb") as archivo:
+                archivo.seek(self.offset)
+                datos = archivo.read()
+                self.offset = archivo.tell()
+        except FileNotFoundError:
+            return
+        if not datos:
+            return
+
+        texto = self.resto + datos.decode("utf-8", errors="replace")
+        lineas = texto.split("\n")
+        self.resto = lineas.pop()
+        for linea in lineas:
+            limpia = linea.rstrip()
+            if limpia:
+                self.ejecucion.publicar(self.tipo, limpia)
+
+    def vaciar(self) -> None:
+        if self.resto.strip():
+            self.ejecucion.publicar(self.tipo, self.resto.rstrip())
+            self.resto = ""
+
+
+class Ejecucion:
+    """Estado observable de una corrida, consultable por el panel."""
+
+    def __init__(self, ident: str, modo: str) -> None:
+        self.id = uuid.uuid4().hex[:12]
+        self.ident = ident
+        self.modo = modo
+        self.target = TARGETS[modo]
+        self.estado = "en_curso"
+        self.fase = "preparando"
+        self.inicio = time.time()
+        self.exit_code: int | None = None
+        self.duracion_ms: int | None = None
+        self.lineas: list[dict] = []
+        self._lock = threading.Lock()
+
+    def fase_nueva(self, fase: str, texto: str) -> None:
+        self.fase = fase
+        self.publicar("fase", texto)
+
+    def publicar(self, tipo: str, texto: str) -> None:
+        with self._lock:
+            if len(self.lineas) >= MAX_LINEAS:
+                return
+            self.lineas.append(
+                {
+                    "t": int((time.time() - self.inicio) * 1000),
+                    "tipo": tipo,
+                    "texto": texto,
+                }
+            )
+
+    def instantanea(self, desde: int = 0) -> dict:
+        with self._lock:
+            total = len(self.lineas)
+            return {
+                "id": self.id,
+                "ataque": self.ident,
+                "modo": self.modo,
+                "target": self.target,
+                "estado": self.estado,
+                "fase": self.fase,
+                "exit_code": self.exit_code,
+                "duracion_ms": self.duracion_ms,
+                "total_lineas": total,
+                "lineas": self.lineas[max(0, desde) :],
+                "truncado": total >= MAX_LINEAS,
+            }
+
+
+def _registrar(ejecucion: Ejecucion) -> None:
+    with _runs_lock:
+        _runs[ejecucion.id] = ejecucion
+        if len(_runs) > MAX_RUNS:
+            for viejo in sorted(_runs.values(), key=lambda e: e.inicio)[: len(_runs) - MAX_RUNS]:
+                if viejo.estado != "en_curso":
+                    _runs.pop(viejo.id, None)
+
+
+def _buscar(run_id: str) -> Ejecucion | None:
+    with _runs_lock:
+        return _runs.get(run_id)
+
+
+def _correr(ejecucion: Ejecucion) -> None:
+    """Ejecuta el ataque publicando fases y líneas a medida que ocurren."""
     trabajo = Path("/tmp") / f"replay-{uuid.uuid4().hex[:8]}"
     (trabajo / "cache").mkdir(parents=True, exist_ok=True)
     salida_txt = trabajo / "stdout.log"
@@ -108,63 +208,90 @@ def ejecutar_ataque(ident: str, modo: str) -> dict:
     entorno.update(
         {
             "EVIDENCE_DIR": str(trabajo),
-            # Caché de cookies propia de esta ejecución: se borra con el resto.
             "CACHE_DIR": str(trabajo / "cache"),
-            "DB_DSN": DB_DSN[modo],
+            "DB_DSN": DB_DSN[ejecucion.modo],
             "LC_ALL": "C.UTF-8",
         }
     )
 
-    inicio = time.time()
-    codigo = 125
     try:
+        ejecucion.fase_nueva(
+            "preparando",
+            f"Validando la prueba y el objetivo del laboratorio: {ejecucion.target}",
+        )
+        ejecucion.fase_nueva("ejecutando", f"Ejecutando attacks/{ejecucion.ident}.sh en modo {ejecucion.modo}")
+
         with open(salida_txt, "wb") as fsalida, open(error_txt, "wb") as ferror:
             proceso = subprocess.Popen(
-                ["bash", str(REPO / "attacks" / f"{ident}.sh"), TARGETS[modo], modo],
+                [
+                    "bash",
+                    str(REPO / "attacks" / f"{ejecucion.ident}.sh"),
+                    ejecucion.target,
+                    ejecucion.modo,
+                ],
                 stdout=fsalida,
                 stderr=ferror,
                 env=entorno,
                 cwd=str(REPO),
-                start_new_session=True,  # grupo de procesos propio
+                start_new_session=True,
             )
-            try:
-                codigo = proceso.wait(timeout=TIMEOUT_SECONDS)
-            except subprocess.TimeoutExpired:
-                # Mata también a los descendientes (curl, psql, etc.).
-                try:
-                    os.killpg(os.getpgid(proceso.pid), signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                proceso.wait()
-                codigo = 124
 
-        salida = _tail(salida_txt, MAX_OUTPUT_CHARS)
-        error = _tail(error_txt, 2000)
-        if error.strip():
-            salida += f"\n[stderr]\n{error}"
-        if codigo == 124:
-            salida = f"Tiempo agotado: el ataque superó los {TIMEOUT_SECONDS} s.\n{salida}"
+            lector_salida = Lector(salida_txt, ejecucion, "salida")
+            lector_error = Lector(error_txt, ejecucion, "error")
+
+            while True:
+                lector_salida.bombear()
+                lector_error.bombear()
+
+                if proceso.poll() is not None:
+                    break
+                if time.time() - ejecucion.inicio > TIMEOUT_SECONDS:
+                    _mata_grupo(proceso)
+                    ejecucion.publicar("error", f"Tiempo agotado: el ataque superó {TIMEOUT_SECONDS} s")
+                    break
+                time.sleep(0.04)
+
+            # Última pasada: vuelca lo que quedó en los buffers.
+            lector_salida.bombear()
+            lector_error.bombear()
+            lector_salida.vaciar()
+            lector_error.vaciar()
+
+            codigo = proceso.wait()
+
+        ejecucion.fase_nueva("recolectando", "Recolectando la evidencia: código de salida y salida completa")
+        ejecucion.exit_code = codigo
+        ejecucion.duracion_ms = int((time.time() - ejecucion.inicio) * 1000)
+
+        ejecucion.fase_nueva("interpretando", "Interpretando el resultado contra la expectativa del modo")
+        if codigo == 0:
+            ejecucion.publicar(
+                "veredicto", "ATAQUE EXITOSO: el defecto está presente (lo esperado en modo vulnerable)"
+            )
+        elif codigo == 1:
+            ejecucion.publicar(
+                "veredicto", "ATAQUE BLOQUEADO: la mitigación funcionó (lo esperado en modo endurecido)"
+            )
+        elif codigo == 124:
+            ejecucion.publicar("veredicto", "TIEMPO AGOTADO: la prueba no terminó a tiempo")
+        else:
+            ejecucion.publicar("veredicto", f"SIN VEREDICTO: la prueba salió con código {codigo}")
+
+        ejecucion.fase = "listo"
+        ejecucion.estado = "listo"
     except Exception as error:  # noqa: BLE001 - se registra, no se filtra al cliente
-        print(f"[error] fallo al ejecutar {ident} ({modo}): {error}", flush=True)
-        codigo = 125
-        salida = "No se pudo ejecutar el ataque. Revisá el registro del contenedor."
+        print(f"[error] fallo al ejecutar {ejecucion.ident} ({ejecucion.modo}): {error}", flush=True)
+        ejecucion.publicar("error", "No se pudo ejecutar el ataque. Revisá el registro del contenedor.")
+        ejecucion.fase = "error"
+        ejecucion.estado = "error"
+        ejecucion.exit_code = 125
     finally:
         shutil.rmtree(trabajo, ignore_errors=True)
-
-    return {
-        "id": ident,
-        "mode": modo,
-        "target": TARGETS[modo],
-        "exit_code": codigo,
-        "ataque_exitoso": codigo == 0,
-        "bloqueado": codigo == 1,
-        "output": salida,
-        "duration_ms": int((time.time() - inicio) * 1000),
-    }
+        _ejecutando.release()
 
 
 class Handler(SimpleHTTPRequestHandler):
-    server_version = "PanelEvidencias/1.1"
+    server_version = "PanelEvidencias/1.2"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(STATIC), **kwargs)
@@ -186,18 +313,13 @@ class Handler(SimpleHTTPRequestHandler):
         return host in {"127.0.0.1", "localhost", "::1"}
 
     def _token_valido(self) -> bool:
-        recibido = self.headers.get("X-Panel-Token") or ""
-        return secrets.compare_digest(recibido, TOKEN)
+        return secrets.compare_digest(self.headers.get("X-Panel-Token") or "", TOKEN)
 
     def _autorizado(self) -> tuple[bool, int, dict]:
         if not self._host_local():
             return False, 403, {"error": "el panel solo atiende peticiones a 127.0.0.1"}
         if not self._token_valido():
-            return (
-                False,
-                403,
-                {"error": "token del panel ausente o inválido: recargá la página"},
-            )
+            return False, 403, {"error": "token del panel ausente o inválido: recargá la página"}
         return True, 200, {}
 
     def _catalogo(self) -> dict:
@@ -208,25 +330,54 @@ class Handler(SimpleHTTPRequestHandler):
             "timeout_seconds": TIMEOUT_SECONDS,
         }
 
-    # ---------------------------------------------------------------- rutas
-
     def end_headers(self) -> None:
-        # El panel es de un laboratorio local: nada se cachea ni se comparte.
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         super().end_headers()
 
+    # ---------------------------------------------------------------- rutas
+
     def do_GET(self) -> None:  # noqa: N802 - API de la librería estándar
-        ruta = urlparse(self.path).path
+        partes = urlparse(self.path)
+        ruta = partes.path
+
         if ruta == "/api/catalogo":
             self._responder_json(200, self._catalogo())
             return
+
         if ruta == "/api/token":
+            # Arranque del panel: se entrega el token a quien ya llegó por 127.0.0.1.
             if not self._host_local():
-                self._responder_json(403, {"error": "solo disponible en 127.0.0.1"})
+                self._responder_json(403, {"error": "el panel solo atiende peticiones a 127.0.0.1"})
                 return
             self._responder_json(200, {"token": TOKEN})
             return
+
+        if ruta.startswith("/api/run-progress/"):
+            permitido, estado, error = self._autorizado()
+            if not permitido:
+                self._responder_json(estado, error)
+                return
+
+        if ruta.startswith("/api/run-progress/"):
+            run_id = ruta.rsplit("/", 1)[-1]
+            if not re.fullmatch(r"[0-9a-f]{12}", run_id):
+                self._responder_json(400, {"error": "identificador de ejecución inválido"})
+                return
+            ejecucion = _buscar(run_id)
+            if ejecucion is None:
+                self._responder_json(404, {"error": "ejecución no encontrada o expirada"})
+                return
+            desde = 0
+            valores = parse_qs(partes.query).get("desde")
+            if valores:
+                try:
+                    desde = max(0, int(valores[0]))
+                except ValueError:
+                    desde = 0
+            self._responder_json(200, ejecucion.instantanea(desde))
+            return
+
         super().do_GET()
 
     def do_POST(self) -> None:  # noqa: N802 - API de la librería estándar
@@ -254,7 +405,6 @@ class Handler(SimpleHTTPRequestHandler):
                 print(f"[error] recargar: {resultado.stdout}{resultado.stderr}", flush=True)
                 self._responder_json(500, {"error": "no se pudieron regenerar los datos"})
                 return
-            # Solo se devuelve la última línea del resumen, sin rutas internas.
             resumen = resultado.stdout.strip().splitlines()[-1:] or ["datos regenerados"]
             self._responder_json(200, {"output": resumen[0]})
             return
@@ -294,16 +444,28 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         if not _ejecutando.acquire(blocking=False):
-            self._responder_json(
-                429, {"error": "ya hay una prueba en curso; esperá a que termine"}
-            )
+            self._responder_json(429, {"error": "ya hay una prueba en curso; esperá a que termine"})
             return
-        try:
-            resultado = ejecutar_ataque(ident, modo)
-        finally:
-            _ejecutando.release()
 
-        self._responder_json(200, resultado)
+        ejecucion = Ejecucion(ident, modo)
+        _registrar(ejecucion)
+        hilo = threading.Thread(target=_correr, args=(ejecucion,), daemon=True)
+        try:
+            hilo.start()
+        except RuntimeError:
+            _ejecutando.release()
+            self._responder_json(500, {"error": "no se pudo iniciar la prueba"})
+            return
+
+        self._responder_json(
+            202,
+            {
+                "run_id": ejecucion.id,
+                "ataque": ident,
+                "modo": modo,
+                "progreso": f"/api/run-progress/{ejecucion.id}",
+            },
+        )
 
     def log_message(self, formato: str, *args) -> None:
         print(f"{self.address_string()} {formato % args}", flush=True)

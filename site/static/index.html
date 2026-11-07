@@ -45,8 +45,18 @@
     <p class="note">
       Elegí un ataque y ejecutalo primero contra el modo <b>vulnerable</b> (el defecto debe
       funcionar) y después contra el <b>endurecido</b> (el ataque debe quedar bloqueado).
-      Cada ejecución corre el mismo script que produce las evidencias oficiales.
+      Vas a ver las fases y la salida del script a medida que ocurren.
     </p>
+    <div class="ritmo">
+      <span class="ritmo-etiqueta">Ritmo de revelado</span>
+      <button class="ritmo-btn" data-ritmo="calmo">Calmo</button>
+      <button class="ritmo-btn activo" data-ritmo="normal">Normal</button>
+      <button class="ritmo-btn" data-ritmo="rapido">Rápido</button>
+      <span class="ritmo-nota">
+        El ataque real tarda milisegundos: el ritmo del revelado es didáctico.
+        La duración real medida se muestra al final.
+      </span>
+    </div>
     <div class="live-layout">
       <div class="card catalogo">
         <h3>Ataques ejecutables desde el panel</h3>
@@ -56,11 +66,15 @@
       <div class="card panel-vivo">
         <div class="panel-vivo-head">
           <h3 id="vivo-titulo">Resultado en vivo</h3>
+          <button class="ghost-mini" id="vivo-saltar" hidden>ver todo ya</button>
           <button class="ghost-mini" id="vivo-limpiar">limpiar</button>
         </div>
-        <div id="vivo-cuerpo">
+        <div class="progreso"><div class="progreso-barra" id="vivo-barra"></div></div>
+        <div class="fases" id="vivo-fases"></div>
+        <div class="consola" id="vivo-consola">
           <p class="note">Todavía no ejecutaste ninguna prueba. Elegí un ataque de la izquierda.</p>
         </div>
+        <div id="vivo-veredicto"></div>
       </div>
     </div>
     <p class="nota-aviso">

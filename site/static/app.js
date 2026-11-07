@@ -10,8 +10,25 @@ const state = {
   catalogo: null,
   filtro: "todos",
   ejecutando: false,
+  saltar: false,
+  ritmo: localStorage.getItem("tcc-ritmo") || "normal",
   token: null,
 };
+
+// Ritmo del revelado: pausa entre líneas y velocidad de tipeo (ms por carácter).
+const RITMOS = {
+  calmo: { pausa: 520, letra: 16, minimoFase: 520 },
+  normal: { pausa: 210, letra: 6, minimoFase: 220 },
+  rapido: { pausa: 30, letra: 0, minimoFase: 40 },
+};
+
+function ritmoActual() {
+  return RITMOS[state.ritmo] || RITMOS.normal;
+}
+
+function esperar(ms) {
+  return new Promise((listo) => setTimeout(listo, ms));
+}
 
 const NIVELES = [
   { piso: 16, clase: "critico", nombre: "Crítico" },
@@ -108,44 +125,119 @@ function renderCatalogo() {
     : "";
 }
 
-function veredictoVivo(resultado) {
-  if (resultado.exit_code === 0) {
-    return {
-      clase: "exito",
-      titulo: `ATAQUE EXITOSO · exit ${resultado.exit_code}`,
-      explicacion:
-        "El defecto está presente: la prueba funcionó. Esto es lo que se espera del modo vulnerable.",
-    };
-  }
-  if (resultado.exit_code === 1) {
-    return {
-      clase: "bloqueado",
-      titulo: `ATAQUE BLOQUEADO · exit ${resultado.exit_code}`,
-      explicacion:
-        "La mitigación funciona: el control detuvo la prueba. Esto es lo que se espera del modo endurecido.",
-    };
-  }
-  return {
-    clase: "raro",
-    titulo: `SIN VEREDICTO · exit ${resultado.exit_code}`,
-    explicacion:
-      "La prueba no pudo ejecutarse (entorno incompleto, tiempo agotado o error inesperado).",
-  };
+function textoVeredicto(linea) {
+  return (linea || "").replace(/^ATAQUE EXITOSO.*/, "exito")
+    .replace(/^ATAQUE BLOQUEADO.*/, "bloqueado");
 }
 
-async function ejecutarAtaque(id, modo) {
-  const cuerpo = document.getElementById("vivo-cuerpo");
-  const titulo = document.getElementById("vivo-titulo");
+function agregarPaso(linea) {
+  const fases = document.getElementById("vivo-fases");
+  fases.querySelectorAll(".paso.activo").forEach((paso) => {
+    paso.classList.remove("activo");
+    paso.classList.add("completado");
+    const icono = paso.querySelector(".paso-icono");
+    if (icono) icono.textContent = "✓";
+  });
 
-  if (state.ejecutando) {
-    cuerpo.innerHTML = `<p class="corriendo">Hay una prueba en curso: esperá a que termine.</p>`;
+  const paso = document.createElement("div");
+  paso.className = "paso activo";
+  paso.innerHTML = `<span class="paso-icono"><span class="aro"></span></span>
+    <span class="paso-texto">${esc(linea.texto)}</span>
+    <span class="paso-tiempo">${linea.t} ms</span>`;
+  fases.appendChild(paso);
+  fases.scrollTop = fases.scrollHeight;
+}
+
+function agregarConsola(texto, clase) {
+  const consola = document.getElementById("vivo-consola");
+  consola.querySelectorAll(".note").forEach((n) => n.remove());
+  const linea = document.createElement("div");
+  linea.className = `lin ${clase}`;
+  linea.textContent = texto;
+  consola.appendChild(linea);
+  consola.scrollTop = consola.scrollHeight;
+  return linea;
+}
+
+async function agregarConsolaTipeada(texto, clase, velocidad) {
+  const consola = document.getElementById("vivo-consola");
+  consola.querySelectorAll(".note").forEach((n) => n.remove());
+  const linea = document.createElement("div");
+  linea.className = `lin ${clase}`;
+  consola.appendChild(linea);
+
+  const animar = velocidad > 0 && !state.saltar && texto.length <= 120;
+  if (!animar) {
+    linea.textContent = texto;
+    consola.scrollTop = consola.scrollHeight;
     return;
   }
 
+  linea.classList.add("escribiendo");
+  for (let i = 1; i <= texto.length; i += 1) {
+    linea.textContent = texto.slice(0, i);
+    consola.scrollTop = consola.scrollHeight;
+    await esperar(velocidad);
+  }
+  linea.classList.remove("escribiendo");
+}
+
+function actualizarBarra(instantanea) {
+  const barra = document.getElementById("vivo-barra");
+  const mapa = { preparando: 12, ejecutando: 45, recolectando: 82, interpretando: 92, listo: 100, error: 100 };
+  let avance = mapa[instantanea.fase] ?? 10;
+  if (instantanea.fase === "ejecutando") {
+    avance = Math.min(80, 40 + instantanea.total_lineas * 4);
+  }
+  barra.style.width = `${avance}%`;
+  barra.classList.toggle("corriendo", instantanea.estado === "en_curso");
+}
+
+function mostrarVeredicto(instantanea, lineas) {
+  const contenedor = document.getElementById("vivo-veredicto");
+  const final = [...lineas].reverse().find((l) => l.tipo === "veredicto");
+  const clase = final && final.texto.startsWith("ATAQUE EXITOSO")
+    ? "exito"
+    : final && final.texto.startsWith("ATAQUE BLOQUEADO")
+      ? "bloqueado"
+      : "raro";
+  const segundos = ((instantanea.duracion_ms || 0) / 1000).toFixed(2);
+
+  contenedor.innerHTML = `
+    <div class="veredicto-final ${clase}">
+      <span class="sello">${esc(final ? final.texto : "SIN VEREDICTO")}</span>
+      <span class="medido">exit ${esc(instantanea.exit_code)} · ${segundos} s reales · modo ${esc(instantanea.modo)}</span>
+    </div>
+    <p class="note">Ese tiempo es el real del ataque. El revelado fue más lento a propósito.</p>`;
+}
+
+function limpiarVivo() {
+  document.getElementById("vivo-titulo").textContent = "Resultado en vivo";
+  document.getElementById("vivo-barra").style.width = "0%";
+  document.getElementById("vivo-barra").classList.remove("corriendo");
+  document.getElementById("vivo-fases").innerHTML = "";
+  document.getElementById("vivo-consola").innerHTML =
+    `<p class="note">Todavía no ejecutaste ninguna prueba. Elegí un ataque de la izquierda.</p>`;
+  document.getElementById("vivo-veredicto").innerHTML = "";
+  document.getElementById("vivo-saltar").hidden = true;
+  document.querySelectorAll(".boton-ataque").forEach((b) => b.classList.remove("activo"));
+}
+
+async function ejecutarAtaque(id, modo) {
+  if (state.ejecutando) return;
+
   state.ejecutando = true;
+  state.saltar = false;
+
+  const titulo = document.getElementById("vivo-titulo");
+  const saltar = document.getElementById("vivo-saltar");
   titulo.textContent = `${nombreDeAtaque(id)} · modo ${modo}`;
-  cuerpo.innerHTML = `<p class="corriendo">Ejecutando <code>attacks/${esc(id)}.sh</code> contra el modo ${esc(modo)}…</p>
-    <p class="note">Objetivo: ${esc(state.catalogo?.targets?.[modo] || modo)}</p>`;
+  document.getElementById("vivo-fases").innerHTML = "";
+  document.getElementById("vivo-consola").innerHTML =
+    `<p class="note">Iniciando la prueba contra ${esc(state.catalogo?.targets?.[modo] || modo)}…</p>`;
+  document.getElementById("vivo-veredicto").innerHTML = "";
+  document.getElementById("vivo-barra").style.width = "4%";
+  saltar.hidden = false;
 
   try {
     if (!state.token) await cargarToken();
@@ -157,44 +249,94 @@ async function ejecutarAtaque(id, modo) {
     const datos = await respuesta.json();
 
     if (respuesta.status === 409 && datos.comando) {
-      cuerpo.innerHTML = `
+      document.getElementById("vivo-consola").innerHTML = `
         <div class="barra-resultado"><span class="veredicto-vivo raro">SE EJECUTA EN LA TERMINAL</span></div>
         <p class="explicacion">${esc(datos.error)}.</p>
-        <div class="comando-sugerido">
-          <p class="note">Comando para mostrar en vivo:</p>
-          <code>${esc(datos.comando)}</code>
-        </div>`;
+        <div class="comando-sugerido"><p class="note">Comando para mostrar en vivo:</p>
+        <code>${esc(datos.comando)}</code></div>`;
       return;
     }
 
     if (!respuesta.ok) {
-      cuerpo.innerHTML = `<div class="barra-resultado"><span class="veredicto-vivo raro">ERROR ${respuesta.status}</span></div>
+      document.getElementById("vivo-consola").innerHTML = `
+        <div class="barra-resultado"><span class="veredicto-vivo raro">ERROR ${respuesta.status}</span></div>
         <p class="explicacion">${esc(datos.error || "respuesta inesperada del servidor")}</p>`;
       return;
     }
 
-    const veredicto = veredictoVivo(datos);
-    const segundos = (datos.duration_ms / 1000).toFixed(1);
-    cuerpo.innerHTML = `
-      <div class="barra-resultado">
-        <span class="veredicto-vivo ${veredicto.clase}">${esc(veredicto.titulo)}</span>
-        <span class="explicacion">${esc(datos.mode)} · ${segundos} s · objetivo ${esc(datos.target)}</span>
-      </div>
-      <p class="explicacion">${esc(veredicto.explicacion)}</p>
-      <pre>${esc(datos.output || "(sin salida)")}</pre>`;
+    await seguirEjecucion(datos.run_id);
   } catch (error) {
-    cuerpo.innerHTML = `<div class="barra-resultado"><span class="veredicto-vivo raro">SIN CONEXIÓN</span></div>
-      <p class="explicacion">No se pudo contactar al ejecutor: ${esc(error.message)}</p>`;
+    document.getElementById("vivo-consola").innerHTML =
+      `<p class="explicacion">No se pudo contactar al ejecutor: ${esc(error.message)}</p>`;
   } finally {
     state.ejecutando = false;
+    saltar.hidden = true;
   }
 }
 
-function limpiarVivo() {
-  document.getElementById("vivo-titulo").textContent = "Resultado en vivo";
-  document.getElementById("vivo-cuerpo").innerHTML =
-    `<p class="note">Todavía no ejecutaste ninguna prueba. Elegí un ataque de la izquierda.</p>`;
-  document.querySelectorAll(".boton-ataque").forEach((b) => b.classList.remove("activo"));
+async function seguirEjecucion(runId) {
+  let desde = 0;
+  let todas = [];
+  const ritmo = ritmoActual();
+
+  for (;;) {
+    const respuesta = await fetch(`/api/run-progress/${runId}?desde=${desde}`, {
+      headers: { "X-Panel-Token": state.token || "" },
+      cache: "no-store",
+    });
+    const instantanea = await respuesta.json();
+    if (!respuesta.ok) {
+      agregarConsola(instantanea.error || "no se pudo leer el avance", "lin-error");
+      return;
+    }
+
+    for (const linea of instantanea.lineas) {
+      todas.push(linea);
+      if (linea.tipo === "fase") {
+        agregarPaso(linea);
+        if (!state.saltar) await esperar(ritmo.minimoFase);
+      } else if (linea.tipo === "veredicto") {
+        agregarConsola(linea.texto, "lin-veredicto");
+      } else if (linea.tipo === "error") {
+        await agregarConsolaTipeada(linea.texto, "lin-error", ritmo.letra);
+        if (!state.saltar) await esperar(ritmo.pausa);
+      } else {
+        await agregarConsolaTipeada(linea.texto, "lin-salida", ritmo.letra);
+        if (!state.saltar) await esperar(ritmo.pausa);
+      }
+    }
+
+    desde = instantanea.total_lineas;
+    actualizarBarra(instantanea);
+
+    if (instantanea.estado !== "en_curso") {
+      document.querySelectorAll("#vivo-fases .paso.activo").forEach((paso) => {
+        paso.classList.remove("activo");
+        paso.classList.add("completado");
+        const icono = paso.querySelector(".paso-icono");
+        if (icono) icono.textContent = "✓";
+      });
+      mostrarVeredicto(instantanea, todas);
+      return;
+    }
+
+    await esperar(state.saltar ? 80 : 240);
+  }
+}
+
+function conectarRitmo() {
+  const botones = document.querySelectorAll(".ritmo-btn");
+  const marcar = (ritmo) => {
+    state.ritmo = ritmo;
+    localStorage.setItem("tcc-ritmo", ritmo);
+    botones.forEach((b) => b.classList.toggle("activo", b.dataset.ritmo === ritmo));
+  };
+  marcar(state.ritmo);
+  botones.forEach((boton) => boton.addEventListener("click", () => marcar(boton.dataset.ritmo)));
+
+  document.getElementById("vivo-saltar").addEventListener("click", () => {
+    state.saltar = true;
+  });
 }
 
 /* ------------------------------------------------------------ matriz ataques */
@@ -512,6 +654,7 @@ function activarFiltros() {
     document.getElementById("detalle").classList.add("oculto");
   });
   document.getElementById("vivo-limpiar").addEventListener("click", limpiarVivo);
+  conectarRitmo();
 }
 
 async function iniciar() {
