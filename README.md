@@ -154,6 +154,21 @@ python3 docs/diagramas/generar_diagramas.py   # regenera los dos SVG
 python3 docs/diagramas/verificar.py           # 0 hallazgos = geometría limpia
 ```
 
+### 3.3 Informe final en PDF
+
+El informe se genera desde `docs/informe/TCC-seguridad-informatica.md` con portada institucional,
+índice de contenido numerado y tablas con ancho de columna declarado:
+
+```bash
+bash docs/informe/build-pdf.sh
+```
+
+El script hace cinco pasos: pandoc convierte el Markdown, un ensamblador arma portada + índice +
+cuerpo y aplica los anchos de tabla, se imprime un PDF de prueba para ubicar cada sección, el índice se
+recompone con los números de página reales (iterando hasta estabilizar) y se imprime el PDF definitivo.
+Al final, `verificar_tablas.py` mide cada celda en Chromium y falla si alguna palabra no cabe en su
+columna o si una tabla desborda su ancho.
+
 ## 4. Estructura del repositorio
 
 ```

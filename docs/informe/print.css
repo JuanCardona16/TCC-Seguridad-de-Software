@@ -1,93 +1,236 @@
-/* Estilo de impresión del informe: A4, tipografía legible y tablas que no se rompen. */
+/* Estilo de impresión del informe: A4, portada institucional y tablas que no
+   desbordan. El ancho de cada tabla se declara en el Markdown con
+   ::: {.tabla-anchos data-cols="..."} y el ensamblador lo convierte en <colgroup>. */
 
 @page {
   size: A4;
-  margin: 18mm 16mm 18mm 16mm;
+  margin: 20mm 18mm 18mm 18mm;
 }
+
+* { box-sizing: border-box; }
 
 body {
   font-family: "DejaVu Serif", Georgia, "Times New Roman", serif;
   font-size: 10.5pt;
-  line-height: 1.5;
-  color: #1a1a1a;
-  max-width: none;
+  line-height: 1.52;
+  color: #16181c;
   margin: 0;
+  max-width: none;
+  hyphens: manual;
 }
+
+/* ------------------------------------------------------------------ portada */
+
+.portada {
+  page-break-after: always;
+  height: 245mm;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-family: "DejaVu Sans", Helvetica, Arial, sans-serif;
+}
+.portada-cabecera { padding-top: 4mm; border-bottom: 1.4pt solid #10263f; padding-bottom: 5mm; }
+.portada-cabecera p { margin: 0; line-height: 1.5; }
+.portada .uni { font-size: 16pt; font-weight: 700; letter-spacing: .6pt; color: #10263f; }
+.portada .fac { font-size: 11.5pt; font-weight: 700; letter-spacing: .4pt; margin-top: 2mm !important; }
+.portada .prog { font-size: 10.5pt; letter-spacing: .3pt; }
+.portada .centro { font-size: 10.5pt; color: #44515f; margin-top: 1.5mm !important; }
+
+.portada-titulo { margin-top: 22mm; }
+.portada .materia {
+  font-size: 10pt;
+  font-weight: 700;
+  letter-spacing: 1.6pt;
+  color: #44515f;
+  margin: 0 0 6mm;
+}
+.portada h1 {
+  font-size: 20pt;
+  line-height: 1.25;
+  margin: 0 8mm 5mm;
+  color: #10263f;
+  border: 0;
+  padding: 0;
+}
+.portada .subtitulo { font-size: 11.5pt; line-height: 1.45; color: #2b3948; margin: 0 6mm; }
+.portada .tipo {
+  display: inline-block;
+  margin-top: 7mm;
+  padding: 2.5mm 5mm;
+  border: 1pt solid #10263f;
+  border-radius: 2mm;
+  font-size: 9.5pt;
+  font-weight: 700;
+  letter-spacing: .8pt;
+  color: #10263f;
+}
+
+.portada-datos { margin-top: auto; }
+.portada .rotulo {
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 1.4pt;
+  color: #6b7785;
+  margin: 6mm 0 2mm;
+}
+.portada .nombre { font-size: 11pt; margin: 0 0 1.2mm; }
+
+.portada-pie {
+  margin-top: auto;
+  border-top: 0.8pt solid #c6ced6;
+  padding-top: 4mm;
+  font-size: 9.5pt;
+  color: #44515f;
+}
+
+/* -------------------------------------------------------------------- índice */
+
+nav#TOC {
+  page-break-after: always;
+  font-family: "DejaVu Sans", Helvetica, Arial, sans-serif;
+}
+nav#TOC > h2 {
+  font-size: 15pt;
+  border-bottom: 1.2pt solid #10263f;
+  padding-bottom: 2mm;
+  margin: 0 0 6mm;
+}
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC li { margin: 0 0 1.4mm; }
+nav#TOC a {
+  display: flex;
+  align-items: baseline;
+  color: #16181c;
+  text-decoration: none;
+}
+nav#TOC li.n1 { font-size: 10.2pt; font-weight: 700; margin-top: 3mm; }
+nav#TOC li.n1:first-child { margin-top: 0; }
+nav#TOC li.n2 { font-size: 9.5pt; font-weight: 400; padding-left: 6mm; }
+nav#TOC li.n2 .txt { color: #44515f; }
+nav#TOC .puntos {
+  flex: 1;
+  border-bottom: 0.6pt dotted #9aa6b2;
+  margin: 0 2mm;
+  transform: translateY(-1mm);
+}
+nav#TOC .pag {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #10263f;
+  min-width: 8mm;
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- jerarquía */
 
 h1, h2, h3, h4 {
-  font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: "DejaVu Sans", Helvetica, Arial, sans-serif;
   color: #10263f;
   line-height: 1.25;
-}
-
-h1 { font-size: 19pt; margin: 0 0 10pt; }
-h2 {
-  font-size: 14pt;
-  margin: 18pt 0 8pt;
-  border-bottom: 1.2pt solid #10263f;
-  padding-bottom: 3pt;
   page-break-after: avoid;
+  break-after: avoid;
 }
-h3 { font-size: 11.5pt; margin: 14pt 0 6pt; page-break-after: avoid; }
+h1 { font-size: 18pt; margin: 0 0 5mm; }
+h2 {
+  font-size: 13.5pt;
+  margin: 9mm 0 3mm;
+  padding-bottom: 1.6mm;
+  border-bottom: 1.1pt solid #10263f;
+}
+h2:first-of-type { margin-top: 0; }
+h3 { font-size: 11.5pt; margin: 6mm 0 2mm; }
+h4 { font-size: 10.5pt; margin: 5mm 0 1.5mm; color: #2b3948; }
 
-p, li { orphans: 3; widows: 3; }
-p { margin: 0 0 6pt; text-align: justify; }
+p { margin: 0 0 2.6mm; text-align: justify; orphans: 3; widows: 3; }
+ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+li { margin-bottom: 1.2mm; text-align: justify; }
+strong { color: #0d1a29; }
 
 a { color: #14507a; text-decoration: none; }
 
+hr { border: 0; border-top: 0.6pt solid #c6ced6; margin: 6mm 0; }
+
+blockquote {
+  margin: 3mm 0;
+  padding: 2.5mm 4mm;
+  background: #fff8e6;
+  border-left: 3pt solid #d29922;
+  font-size: 9.8pt;
+}
+blockquote p { margin: 0; }
+
+/* ------------------------------------------------------------------- código */
+
 code, pre {
   font-family: "DejaVu Sans Mono", "SFMono-Regular", Menlo, monospace;
-  font-size: 8.6pt;
+  font-size: 8.4pt;
 }
 code {
-  background: #f2f4f7;
-  padding: 0.6pt 2.6pt;
-  border-radius: 2pt;
+  background: #f1f4f7;
+  padding: 0.3mm 1mm;
+  border-radius: 1mm;
+  overflow-wrap: anywhere;
 }
 pre {
   background: #f6f8fa;
   border: 0.6pt solid #d0d7de;
   border-left: 2.4pt solid #10263f;
-  border-radius: 3pt;
-  padding: 7pt 9pt;
-  overflow-x: auto;
+  border-radius: 1.5mm;
+  padding: 2.5mm 3mm;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   page-break-inside: avoid;
+  break-inside: avoid;
 }
 pre code { background: none; padding: 0; }
 
+/* ------------------------------------------------------------------- tablas */
+
 table {
-  border-collapse: collapse;
   width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
   font-family: "DejaVu Sans", Helvetica, Arial, sans-serif;
-  font-size: 8.4pt;
-  margin: 8pt 0 12pt;
-  page-break-inside: auto;
+  font-size: 8.1pt;
+  line-height: 1.38;
+  margin: 3mm 0 5mm;
+  table-layout: fixed; /* clave: el ancho de columna manda, el texto se ajusta */
 }
-thead { background: #eef2f6; }
 th, td {
-  border: 0.6pt solid #c6ced6;
-  padding: 3.6pt 5pt;
+  border: 0.5pt solid #b9c3cd;
+  padding: 1.3mm 1.5mm;
   text-align: left;
   vertical-align: top;
+  /* break-word corta solo cuando una palabra no entra sola; nunca parte
+     palabras que sí caben (eso producía "Informació n"). */
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
 }
-th { font-weight: 700; }
-tbody tr:nth-child(even) { background: #fafbfc; }
-tr { page-break-inside: avoid; }
-
-blockquote {
-  margin: 8pt 0;
-  padding: 5pt 10pt;
-  background: #fff8e6;
-  border-left: 3pt solid #d29922;
+thead th {
+  background: #e8eef4;
+  font-weight: 700;
+  font-size: 7.9pt;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #10263f;
+  overflow-wrap: normal; /* el encabezado no se parte: se acorta */
+  white-space: normal;
 }
+tbody tr:nth-child(even) { background: #f8fafb; }
+tr { page-break-inside: avoid; break-inside: avoid; }
+thead { display: table-header-group; } /* repite la cabecera al cortar página */
+caption { caption-side: top; font-size: 8.4pt; color: #4a5765; text-align: left; padding-bottom: 1.5mm; }
 
-hr { border: 0; border-top: 0.6pt solid #c6ced6; margin: 14pt 0; }
+/* Cifras y rutas: monoespaciado y sin cortes raros */
+td.codigo, th.codigo { font-family: "DejaVu Sans Mono", monospace; font-size: 7.4pt; }
+/* Columnas de códigos y rutas: permiten cortar sin partir el sentido. */
+td code { overflow-wrap: break-word; }
 
-ul, ol { margin: 0 0 8pt; padding-left: 16pt; }
+/* Las tablas dentro de su envoltorio declarado nunca desbordan la caja */
+.tabla-anchos { max-width: 100%; }
 
-img, svg { max-width: 100%; }
+/* --------------------------------------------------------------- utilidades */
 
-/* Portada: el primer h1 y los datos del encabezado ocupan la primera página. */
-h1:first-of-type { page-break-before: avoid; }
-h2#resumen-ejecutivo { page-break-before: always; }
+.nueva-pagina { page-break-before: always; }
+.evitar-corte { page-break-inside: avoid; }

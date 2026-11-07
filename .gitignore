@@ -23,3 +23,6 @@ evidence/http/replay/
 site/static/data/
 dist/
 docs/informe/*.html
+docs/informe/.cuerpo.html
+docs/informe/.toc.json
+docs/informe/.paginas.json

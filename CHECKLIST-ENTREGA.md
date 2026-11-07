@@ -19,7 +19,9 @@ Uso: marcar cada casilla antes de subir. Las rutas son relativas a la raíz del 
 ### 2. Documento final
 
 - [ ] `docs/informe/TCC-seguridad-informatica.pdf` generado con `bash docs/informe/build-pdf.sh`.
-- [ ] Portada con los **nombres reales** de los tres integrantes (reemplazar `[Nombre 1..3]`).
+- [ ] Portada institucional con universidad, facultad, programa, centro tutorial, título, integrantes y docente.
+- [ ] Índice de contenido con números de página verificados contra el PDF.
+- [ ] Tablas sin desbordes: `python3 docs/informe/verificar_tablas.py` debe reportar 0 hallazgos.
 - [ ] Todas las tablas y diagramas presentes en el PDF.
 - [ ] Formato institucional aplicado si el docente exige la plantilla oficial.
 
