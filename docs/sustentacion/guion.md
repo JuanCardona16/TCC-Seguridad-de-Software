@@ -14,18 +14,18 @@ prueba.
 
 | Min | Bloque | Quién | Qué se ve en pantalla |
 |---|---|---|---|
-| 0:00 – 1:30 | Problema y propuesta: un binario, dos políticas | Integrante 1 | Diapositivas 1–3 |
-| 1:30 – 3:00 | Arquitectura, STRIDE y análisis de riesgos | Integrante 1 | Diapositivas 4, 6, 7 |
-| 3:00 – 6:30 | **Demostración en vivo**: ataque y mitigación | Integrante 3 | Terminal + panel de evidencias |
-| 6:30 – 8:00 | Vulnerabilidades y mitigaciones: la matriz completa | Integrante 2 | Panel, sección «Matriz antes/después» |
-| 8:00 – 9:00 | Criptografía y decisiones de implementación | Integrante 2 | Diapositiva 10 y código |
-| 9:00 – 10:00 | Roles, riesgos residuales y cierre | Integrante 3 | Diapositiva 13 |
+| 0:00 – 1:30 | Problema y propuesta: un binario, dos políticas | Sergio | Diapositivas 1–3 |
+| 1:30 – 3:00 | Arquitectura, STRIDE y análisis de riesgos | Sergio | Diapositivas 4, 6, 7 |
+| 3:00 – 6:30 | **Demostración en vivo**: ataque y mitigación | Christian | Terminal + panel de evidencias |
+| 6:30 – 8:00 | Vulnerabilidades y mitigaciones: la matriz completa | Juan David | Panel, sección «Matriz antes/después» |
+| 8:00 – 9:00 | Criptografía y decisiones de implementación | Juan David | Diapositiva 10 y código |
+| 9:00 – 10:00 | Roles, riesgos residuales y cierre | Christian | Diapositiva 13 |
 
 ---
 
 ## 2. Guion por bloque
 
-### 0:00 – 1:30 · Problema y propuesta (Integrante 1)
+### 0:00 – 1:30 · Problema y propuesta (Sergio)
 
 > «Una aplicación de gestión documental sin controles permite leer documentos de otros usuarios,
 > recuperar credenciales, escalar privilegios y escribir archivos en el servidor sin dejar rastro.
@@ -37,7 +37,7 @@ prueba.
 
 Frase de anclaje: *«No comparamos dos proyectos: comparamos dos políticas sobre el mismo código.»*
 
-### 1:30 – 3:00 · Arquitectura, STRIDE y riesgos (Integrante 1)
+### 1:30 – 3:00 · Arquitectura, STRIDE y riesgos (Sergio)
 
 > «Todo corre en Docker y solo se publica en 127.0.0.1: la base de datos no expone ningún puerto y
 > el modo endurecido vive detrás de un gateway con TLS. Sobre el diagrama de flujo aplicamos STRIDE
@@ -47,7 +47,7 @@ Frase de anclaje: *«No comparamos dos proyectos: comparamos dos políticas sobr
 
 Mostrar: diapositiva 4 (arquitectura), 6 (STRIDE) y 7 (tabla de riesgos).
 
-### 3:00 – 6:30 · Demostración en vivo (Integrante 3)
+### 3:00 – 6:30 · Demostración en vivo (Christian)
 
 Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:18090`.
 
@@ -58,7 +58,10 @@ Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:
 > recolectando → interpretando) y las líneas de salida con tiempo real. Si vas con el tiempo justo,
 > pasá a **Rápido** o usá «ver todo ya».
 
-1. **Panel** — mostrar la matriz: verde en la columna vulnerable (el ataque funcionó) y verde en la
+1. **Apertura del panel** — la primera sección resume el trabajo (problema, qué se hizo, cómo, cómo
+   se resolvió) y presenta a los tres integrantes: sirve como portada viva de la sustentación.
+
+2. **Panel** — mostrar la matriz: verde en la columna vulnerable (el ataque funcionó) y verde en la
    columna endurecido (el ataque fue bloqueado). «Verde en las dos columnas significa cosas opuestas:
    por eso el veredicto se compara contra la expectativa.»
 
@@ -67,24 +70,24 @@ Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:
    propiedad del recurso». Señalar que cada ejecución guarda su propio directorio temporal y no toca
    las evidencias oficiales.
 
-3. **La cookie es el permiso** (40 s): fila 05, ▶ en vulnerable → panel administrativo; ▶ en
+4. **La cookie es el permiso** (40 s): fila 05, ▶ en vulnerable → panel administrativo; ▶ en
    endurecido → firma inválida. «El servidor confiaba en un valor que el cliente controla.»
 
-4. **El hash es el eslabón débil** (50 s): fila 06, ▶ en vulnerable → tres contraseñas recuperadas con
+5. **El hash es el eslabón débil** (50 s): fila 06, ▶ en vulnerable → tres contraseñas recuperadas con
    un diccionario de diez palabras; ▶ en endurecido → Argon2id no cede. «Cada intento cuesta 19 MiB de
    memoria: eso es lo que hace inviable el ataque a escala.»
 
-5. **Tráfico en claro** (40 s): fila 09 muestra ⌘ (requiere la terminal). Correr el comando que el
+6. **Tráfico en claro** (40 s): fila 09 muestra ⌘ (requiere la terminal). Correr el comando que el
    panel indica y abrir `evidence/network/09-http.pcap` en Wireshark con el filtro `http`: la
    contraseña se lee. Abrir `09-tls.pcap`: no hay texto legible.
 
-6. **Refrescar** (15 s): `bash attacks/run-all.sh` en la terminal → 18 PASS, y `docker compose restart
+7. **Refrescar** (15 s): `bash attacks/run-all.sh` en la terminal → 18 PASS, y `docker compose restart
    evidence` si quieren ver la fecha de la corrida actualizada.
 
 > **Plan B:** si falla la red, el proyector o Docker, reproducir el video de la demo
 > (`evidence/demo.mp4`) y continuar con el panel, que funciona sin la suite.
 
-### 6:30 – 8:00 · Vulnerabilidades y mitigaciones (Integrante 2)
+### 6:30 – 8:00 · Vulnerabilidades y mitigaciones (Juan David)
 
 > «Cada defecto tiene su control en el mismo archivo, a pocas líneas de distancia.»
 >
@@ -96,13 +99,13 @@ Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:
 > - Sin límite de intentos → 5 por minuto, bloqueo de 5 minutos, TOTP y `limit_req` en el gateway.
 > - Sin trazabilidad → `audit_log` con actor, acción, objetivo y resultado.
 
-### 8:00 – 9:00 · Criptografía (Integrante 2)
+### 8:00 – 9:00 · Criptografía (Juan David)
 
 > «Tres decisiones que vale la pena defender: el hash usa Argon2id con parámetros de OWASP, no MD5;
 > el cifrado es AEAD, así que un documento alterado no se descifra; y la comparación de firmas es en
 > tiempo constante para no filtrar información por temporización.»
 
-### 9:00 – 10:00 · Roles, residuales y cierre (Integrante 3)
+### 9:00 – 10:00 · Roles, residuales y cierre (Christian)
 
 > «Tres roles: riesgos y arquitectura, desarrollo y endurecimiento, pentesting y evidencias.
 >

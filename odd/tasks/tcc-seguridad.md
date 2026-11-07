@@ -59,6 +59,9 @@ que no se resuelve con código.
 | T14 | Panel: visor de diagramas con zoom (rueda, arrastre, teclado) para mostrar los diagramas al docente | S6 | inline | `dc3e486` |
 | T15 | Panel: ejecución de ataques en vivo con guardas, verificada de forma independiente y endurecida según los hallazgos | S6 | inline | `dc3e486` |
 | T16 | Panel: revelado por fases con animaciones (streaming por sondeo, ritmo didáctico declarado) | S6 | inline | `f1a321b` |
+| T17 | Panel: sección de presentación del proyecto con integrantes y animaciones de aparición | S6 | inline | `eac1c59` |
+| T18 | Panel: evidencia visible por ataque (tabla, documento, código) extraída de la respuesta cruda | S6 | inline | `eac1c59` |
+| T19 | Diagramas regenerados por script con verificador geométrico | S3 | inline | pendiente |
 | T13 | Escribir al tutor por el avance del 31/10 y pedir plantilla + criterios de rúbrica | S10, S1 | humano | — |
 
 ## Log

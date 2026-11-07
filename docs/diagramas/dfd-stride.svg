@@ -1,141 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="860" viewBox="0 0 1240 860" role="img" aria-labelledby="titulo-dfd">
-  <title id="titulo-dfd">Flujo de datos y amenazas STRIDE de MiniGestor Documental</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="940" viewBox="0 0 1280 940" role="img" aria-labelledby="titulo">
+  <title id="titulo">MiniGestor Documental — flujo de datos y amenazas (STRIDE)</title>
   <defs>
-    <marker id="af" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 z" fill="#8b949e"/>
-    </marker>
-    <marker id="af-r" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 z" fill="#f85149"/>
-    </marker>
+    <marker id="punta-gris" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#8b949e"/></marker><marker id="punta-azul" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#58a6ff"/></marker><marker id="punta-rojo" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#f85149"/></marker><marker id="punta-verde" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#3fb950"/></marker><marker id="punta-ambar" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#d29922"/></marker>
   </defs>
 
-  <rect width="1240" height="860" fill="#0d1117"/>
+  <rect width="1280" height="940" fill="#0d1117" data-contenedor="1"/>
 
-  <text x="40" y="46" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="24" font-weight="700">
-    Flujo de datos y amenazas (STRIDE)
-  </text>
-  <text x="40" y="72" fill="#8b949e" font-family="system-ui, sans-serif" font-size="14">
-    Cada flujo marcado en rojo es el que la suite de ataques explota en el modo vulnerable
-  </text>
+  <text x="40" y="44" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="23" font-weight="700">MiniGestor Documental — flujo de datos y amenazas (STRIDE)</text>
+  <text x="40" y="68" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13.5">Ocho flujos entre el usuario, los procesos y los almacenes · cada amenaza tiene su ataque</text>
 
-  <!-- entidad externa -->
-  <rect x="40" y="200" width="180" height="300" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
-  <text x="60" y="230" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Usuario</text>
-  <text x="60" y="252" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">navegador / auditor</text>
-  <text x="60" y="286" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· ingresa credenciales</text>
-  <text x="60" y="306" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· busca y lee documentos</text>
-  <text x="60" y="326" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sube archivos</text>
-  <text x="60" y="346" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· administra usuarios</text>
-
-  <!-- procesos -->
-  <rect x="350" y="130" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-  <text x="368" y="158" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">1 · Autenticación</text>
-  <text x="368" y="180" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">verifica contraseña · TOTP · emite sesión</text>
-  <text x="368" y="200" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: MD5, cookie usuario:rol, sin límites</text>
-
-  <rect x="350" y="250" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-  <text x="368" y="278" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">2 · Consulta de documentos</text>
-  <text x="368" y="300" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">búsqueda, lectura y renderizado HTML</text>
-  <text x="368" y="320" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: SQL concatenado, sin escape, sin dueño</text>
-
-  <rect x="350" y="370" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-  <text x="368" y="398" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">3 · Carga de documentos</text>
-  <text x="368" y="420" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">valida, nombra y persiste el archivo</text>
-  <text x="368" y="440" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: nombre del cliente como ruta</text>
-
-  <rect x="350" y="490" width="270" height="90" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-  <text x="368" y="518" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">4 · Descarga y auditoría</text>
-  <text x="368" y="540" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">decide autorización y registra el evento</text>
-  <text x="368" y="560" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">v1: sin autorización ni registro</text>
-
-  <!-- almacenes -->
-  <rect x="760" y="130" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
-  <text x="778" y="158" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D1 · users</text>
-  <text x="778" y="180" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">credenciales, rol, secreto TOTP</text>
-  <text x="778" y="200" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">contadores de intentos</text>
-
-  <rect x="760" y="250" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
-  <text x="778" y="278" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D2 · documents + archivos</text>
-  <text x="778" y="300" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">metadatos y contenido</text>
-  <text x="778" y="320" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">volumen /data/docs</text>
-
-  <rect x="760" y="490" width="220" height="90" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
-  <text x="778" y="518" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">D3 · audit_log</text>
-  <text x="778" y="540" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">actor, acción, objetivo, resultado</text>
-  <text x="778" y="560" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">solo existe uso en v2</text>
-
-  <!-- flujos -->
-  <path d="M220 245 L350 175" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="232" y="196" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F1 credenciales</text>
-
-  <path d="M620 175 L760 175" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="618" y="164" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F2 hash</text>
-
-  <path d="M220 285 L350 295" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="222" y="286" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F3 término de búsqueda</text>
-
-  <path d="M620 295 L760 295" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="628" y="284" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F4 SQL</text>
-
-  <path d="M220 400 L350 415" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="222" y="392" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F5 archivo + nombre</text>
-
-  <path d="M620 415 L760 340" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="628" y="392" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F6 escritura</text>
-
-  <path d="M760 320 L620 330" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#af-r)"/>
-  <text x="650" y="348" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">F7 contenido + HTML</text>
-
-  <path d="M620 535 L760 535" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#af)"/>
-  <text x="628" y="524" fill="#3fb950" font-family="ui-monospace, monospace" font-size="11">F8 evento (v2)</text>
-
-  <path d="M220 480 L350 520" stroke="#8b949e" stroke-width="1.6" fill="none" marker-end="url(#af)"/>
-  <text x="222" y="516" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">F9 descarga</text>
-
-  <!-- tabla STRIDE -->
-  <rect x="40" y="620" width="1160" height="200" rx="10" fill="#161b22" stroke="#30363d"/>
-  <text x="60" y="650" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Amenazas identificadas por flujo (STRIDE)</text>
-
-  <text x="60" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">FLUJO</text>
-  <text x="150" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">STRIDE</text>
-  <text x="290" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">AMENAZA</text>
-  <text x="800" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">DEFECTO (v1)</text>
-  <text x="1060" y="682" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">ATAQUE</text>
-
-  <text x="60" y="706" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F1</text>
-  <text x="150" y="706" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Spoofing</text>
-  <text x="290" y="706" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Suplantación de usuario y fuerza bruta</text>
-  <text x="800" y="706" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">sin límite, mensajes que enumeran</text>
-  <text x="1060" y="706" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">04-bruteforce</text>
-
-  <text x="60" y="728" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F2/F7</text>
-  <text x="150" y="728" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Information disclosure</text>
-  <text x="290" y="728" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Hashes y documentos expuestos</text>
-  <text x="800" y="728" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">MD5 sin sal, archivos en claro</text>
-  <text x="1060" y="728" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">06-weak-hash</text>
-
-  <text x="60" y="750" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F3/F4</text>
-  <text x="150" y="750" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Tampering · Elevation</text>
-  <text x="290" y="750" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Inyección SQL y lectura sin autorización</text>
-  <text x="800" y="750" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">SQL concatenado, sin verificar dueño</text>
-  <text x="1060" y="750" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">01-sqli / 03-idor</text>
-
-  <text x="60" y="772" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F3/F7</text>
-  <text x="150" y="772" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Elevation (cliente)</text>
-  <text x="290" y="772" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Ejecución de script en el navegador de la víctima</text>
-  <text x="800" y="772" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">salida sin escapar, cookie sin HttpOnly</text>
-  <text x="1060" y="772" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">02-xss</text>
-
-  <text x="60" y="794" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F5/F6</text>
-  <text x="150" y="794" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Tampering</text>
-  <text x="290" y="794" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Escritura de archivos fuera del almacén</text>
-  <text x="800" y="794" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">nombre del cliente usado como ruta</text>
-  <text x="1060" y="794" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">07-traversal</text>
-
-  <text x="60" y="816" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">F8</text>
-  <text x="150" y="816" fill="#d29922" font-family="system-ui, sans-serif" font-size="12">Repudiation</text>
-  <text x="290" y="816" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">Imposibilidad de reconstruir quién hizo qué</text>
-  <text x="800" y="816" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">sin audit_log en v1</text>
-  <text x="1060" y="816" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">08-headers</text>
+  <polyline points="250,150 380,150" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="315.0" y="140" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F1 credenciales</text>
+  <text x="315.0" y="156" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">S · fuerza bruta</text>
+  <polyline points="680,150 830,150" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="755.0" y="140" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F2 hash</text>
+  <text x="755.0" y="156" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">I · MD5 sin sal</text>
+  <polyline points="250,286 380,286" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="315.0" y="276" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F3 búsqueda</text>
+  <text x="315.0" y="292" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">T · SQL injection</text>
+  <polyline points="680,286 830,286" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="755.0" y="276" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F4 SQL</text>
+  <text x="755.0" y="292" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">E · sin dueño</text>
+  <polyline points="250,410 380,410" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="315.0" y="400" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F5 archivo</text>
+  <text x="315.0" y="416" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">T · traversal</text>
+  <polyline points="680,410 830,286" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="755.0" y="372" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F6 escritura</text>
+  <text x="755.0" y="388" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">I · texto claro</text>
+  <polyline points="250,534 380,534" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="315.0" y="524" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F7 descarga</text>
+  <text x="315.0" y="540" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">I · IDOR</text>
+  <polyline points="680,534 830,534" fill="none" stroke="#3fb950" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-verde)"/>
+    <text x="755.0" y="524" fill="#3fb950" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">F8 evento (v2)</text>
+  <text x="755.0" y="540" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">R · repudio</text>
+  <rect x="40" y="230" width="210" height="330" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="58" y="256" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">Usuario</text>
+    <text x="58" y="276" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">entidad externa</text>
+    <text x="58" y="298" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">navegador / auditor</text>
+    <text x="58" y="318" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">· ingresa credenciales</text>
+    <text x="58" y="338" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">· busca y lee documentos</text>
+    <text x="58" y="358" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">· sube archivos</text>
+    <text x="58" y="378" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">· administra usuarios</text>
+  <rect x="380" y="110" width="300" height="104" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+    <text x="398" y="136" fill="#a3c9f7" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">1 · Autenticación</text>
+    <text x="398" y="156" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">proceso</text>
+    <text x="398" y="178" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">verifica contraseña · TOTP</text>
+    <text x="398" y="198" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: MD5 · cookie usuario:rol</text>
+  <rect x="380" y="234" width="300" height="104" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+    <text x="398" y="260" fill="#a3c9f7" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">2 · Consulta de documentos</text>
+    <text x="398" y="280" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">proceso</text>
+    <text x="398" y="302" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">búsqueda y render HTML</text>
+    <text x="398" y="322" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: SQL concatenado, sin escape</text>
+  <rect x="380" y="358" width="300" height="104" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+    <text x="398" y="384" fill="#a3c9f7" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">3 · Carga de documentos</text>
+    <text x="398" y="404" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">proceso</text>
+    <text x="398" y="426" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">valida, nombra y persiste</text>
+    <text x="398" y="446" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: nombre del cliente = ruta</text>
+  <rect x="380" y="482" width="300" height="104" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+    <text x="398" y="508" fill="#a3c9f7" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">4 · Descarga y auditoría</text>
+    <text x="398" y="528" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">proceso</text>
+    <text x="398" y="550" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">autoriza y registra el evento</text>
+    <text x="398" y="570" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: sin autorización ni log</text>
+  <rect x="830" y="110" width="300" height="104" rx="10" fill="#241a08" stroke="#d29922" stroke-width="2"/>
+    <text x="848" y="136" fill="#f5d78e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">D1 · users</text>
+    <text x="848" y="156" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">almacén de datos</text>
+    <text x="848" y="178" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">credenciales, rol, secreto TOTP</text>
+    <text x="848" y="198" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">contadores de intentos</text>
+  <rect x="830" y="234" width="300" height="104" rx="10" fill="#241a08" stroke="#d29922" stroke-width="2"/>
+    <text x="848" y="260" fill="#f5d78e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">D2 · documents + archivos</text>
+    <text x="848" y="280" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">almacén de datos</text>
+    <text x="848" y="302" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">metadatos y contenido</text>
+    <text x="848" y="322" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">volumen /data/docs</text>
+  <rect x="830" y="482" width="300" height="104" rx="10" fill="#241a08" stroke="#d29922" stroke-width="2"/>
+    <text x="848" y="508" fill="#f5d78e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">D3 · audit_log</text>
+    <text x="848" y="528" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">almacén de datos</text>
+    <text x="848" y="550" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">actor, acción, objetivo, resultado</text>
+    <text x="848" y="570" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">solo se usa en v2</text>
+  <text x="40" y="600" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">Amenazas identificadas por flujo (STRIDE)</text>
+  <text x="40" y="618" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">Cada flujo marcado en rojo es el que la suite de ataques explota en el modo vulnerable.</text>
+  <text x="60" y="630" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">FLUJO</text><text x="140" y="630" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">STRIDE</text><text x="330" y="630" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">AMENAZA</text><text x="700" y="630" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">DEFECTO EN V1</text><text x="1000" y="630" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">ATAQUE QUE LO DEMUESTRA</text>
+  <line x1="50" y1="638" x2="1230" y2="638" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="654" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F1</text>
+  <text x="140" y="654" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Spoofing</text>
+  <text x="330" y="654" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Suplantación de usuario y fuerza bruta</text>
+  <text x="700" y="654" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin límite ni bloqueo</text>
+  <text x="1000" y="654" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">04-bruteforce</text>
+  <line x1="50" y1="668" x2="1230" y2="668" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="684" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F2</text>
+  <text x="140" y="684" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Information disclosure</text>
+  <text x="330" y="684" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Hashes expuestos en una brecha</text>
+  <text x="700" y="684" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">MD5 sin sal</text>
+  <text x="1000" y="684" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">06-weak-hash</text>
+  <line x1="50" y1="698" x2="1230" y2="698" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="714" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F3</text>
+  <text x="140" y="714" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Tampering</text>
+  <text x="330" y="714" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Inyección SQL en la búsqueda</text>
+  <text x="700" y="714" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">SQL concatenado</text>
+  <text x="1000" y="714" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">01-sqli-search</text>
+  <line x1="50" y1="728" x2="1230" y2="728" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="744" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F4</text>
+  <text x="140" y="744" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Elevation of privilege</text>
+  <text x="330" y="744" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Lectura de documentos ajenos</text>
+  <text x="700" y="744" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin verificar dueño</text>
+  <text x="1000" y="744" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">03-idor</text>
+  <line x1="50" y1="758" x2="1230" y2="758" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="774" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F5</text>
+  <text x="140" y="774" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Tampering</text>
+  <text x="330" y="774" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Escritura fuera del almacén</text>
+  <text x="700" y="774" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">nombre del cliente como ruta</text>
+  <text x="1000" y="774" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">07-upload-traversal</text>
+  <line x1="50" y1="788" x2="1230" y2="788" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="804" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F6</text>
+  <text x="140" y="804" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Information disclosure</text>
+  <text x="330" y="804" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Contenido en claro en disco</text>
+  <text x="700" y="804" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin cifrado en reposo</text>
+  <text x="1000" y="804" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">07-upload-traversal</text>
+  <line x1="50" y1="818" x2="1230" y2="818" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="834" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F7</text>
+  <text x="140" y="834" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Elevation of privilege</text>
+  <text x="330" y="834" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">XSS en el navegador de la víctima</text>
+  <text x="700" y="834" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">salida sin escapar</text>
+  <text x="1000" y="834" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">02-xss-stored</text>
+  <line x1="50" y1="848" x2="1230" y2="848" stroke="#30363d" stroke-width="1"/>
+  <text x="60" y="864" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">F8</text>
+  <text x="140" y="864" fill="#d29922" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Repudiation</text>
+  <text x="330" y="864" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">No se puede reconstruir quién hizo qué</text>
+  <text x="700" y="864" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin audit_log</text>
+  <text x="1000" y="864" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">08-headers</text>
 </svg>

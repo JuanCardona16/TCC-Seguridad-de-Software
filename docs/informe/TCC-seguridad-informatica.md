@@ -7,9 +7,9 @@ Universidad de Córdoba · Facultad de Ingeniería · Ingeniería de Sistemas
 
 | Integrante | Rol en el trabajo |
 |---|---|
-| _[Nombre 1]_ | Líder de proyecto y análisis de riesgos (MAGERIT, arquitectura, STRIDE, coordinación) |
-| _[Nombre 2]_ | Desarrollo y endurecimiento (aplicación Rust, criptografía, sesiones, segundo factor) |
-| _[Nombre 3]_ | Pentesting y evidencias (suite de ataques, capturas, panel interactivo, sustentación) |
+| **Sergio Luis Doria Días** | Líder de proyecto y análisis de riesgos (MAGERIT, arquitectura, STRIDE, coordinación) |
+| **Juan David Cardona Bageth** | Desarrollo y endurecimiento (aplicación Rust, criptografía, sesiones, segundo factor) |
+| **Christian David Traeger Gamero** | Pentesting y evidencias (suite de ataques, capturas, panel interactivo, sustentación) |
 
 **Fecha de entrega:** 20 de noviembre de 2026 · **Sustentación:** 21 de noviembre de 2026
 
@@ -315,7 +315,7 @@ Ninguna de las dos correcciones tocó el comportamiento de seguridad buscado. El
 | Respuestas HTTP crudas | `evidence/http/<modo>/*.html` |
 | Capturas de tráfico (HTTP en claro / TLS) | `evidence/network/09-http.pcap`, `09-tls.pcap` |
 | Panel interactivo (consulta y ejecución en vivo) | `http://127.0.0.1:18090` |
-| Diagramas | `docs/diagramas/*.svg` |
+| Diagramas (generados por script y verificados geométricamente) | `docs/diagramas/*.svg` |
 | Inventario de riesgos | `docs/riesgos/magerit.yml` |
 
 ### 8.5 Demostración en vivo desde el panel
@@ -330,6 +330,13 @@ quien escribe en la terminal: se hace clic, se ve la salida y se explica. La eje
 en curso —validando el objetivo, ejecutando el script, recolectando la evidencia, interpretando el
 resultado— y las líneas de salida a medida que el script las escribe, con spinner, marca de tiempo
 real, efecto de tipeo, barra de progreso y sello del veredicto.
+
+Cada ejecución termina mostrando la **evidencia visible** extraída de la respuesta cruda que la
+prueba guardó: la tabla de usuarios y hashes que devolvió la inyección, el documento confidencial que
+se sirvió sin permiso con su contenido real, el fragmento de HTML que el navegador ejecuta en el XSS,
+la tabla de contraseñas recuperadas por diccionario, los códigos HTTP de cada intento de fuerza bruta
+o el estado de cada cabecera de seguridad. No es una captura de pantalla: se parsea la respuesta que
+el ataque acaba de obtener, de modo que el docente ve el dato, no una afirmación sobre el dato.
 
 **Sobre la honestidad del ritmo.** Un ataque real tarda entre 50 y 300 ms: sin mediación, el docente
 vería un resultado instantáneo y no un proceso. El panel separa ambas cosas de forma explícita: la
@@ -374,6 +381,13 @@ sino un identificador de ejecución con consulta periódica (`POST /api/run/<ata
 proceso cada 40 ms y publica solo líneas completas, con un tope de 400 líneas por ejecución y un
 registro de las últimas 20 corridas. Con eso el panel funciona incluso si el navegador se recarga a
 mitad de una prueba.
+
+**Reproducibilidad de los diagramas.** Los dos diagramas del informe no se dibujaron a mano: un
+generador (`docs/diagramas/generar_diagramas.py`) calcula bandas, corredores y etiquetas, y un
+verificador (`verificar.py`) comprueba la geometría resultante —texto fuera del lienzo, texto sobre
+texto, texto sobre una caja ajena y flechas que atraviesan cajas— devolviendo error si algo se
+superpone. Un diagrama que se puede regenerar y verificar es documentación mantenible; una imagen
+editada a mano deja de actualizarse en cuanto cambia el sistema.
 
 ## 9. Discusión
 
@@ -458,7 +472,7 @@ bash attacks/03-idor.sh https://127.0.0.1:18443 hardened     # exit 1: bloqueado
 
 ### Anexo C — Distribución de roles (CIPA de 3 integrantes)
 
-| Actividad | Integrante 1 (líder/riesgos) | Integrante 2 (desarrollo) | Integrante 3 (pentesting) |
+| Actividad | Sergio (líder/riesgos) | Juan David (desarrollo) | Christian (pentesting) |
 |---|---|---|---|
 | Análisis de riesgos MAGERIT | **R** | C | C |
 | Arquitectura y diagramas | **R** | C | C |

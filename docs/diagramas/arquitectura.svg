@@ -1,144 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="800" viewBox="0 0 1240 800" role="img" aria-labelledby="titulo">
-  <title id="titulo">Arquitectura del laboratorio MiniGestor Documental</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="titulo">
+  <title id="titulo">MiniGestor Documental — arquitectura del laboratorio</title>
   <defs>
-    <marker id="flecha" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 z" fill="#8b949e"/>
-    </marker>
-    <marker id="flecha-roja" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 z" fill="#f85149"/>
-    </marker>
-    <marker id="flecha-verde" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 z" fill="#3fb950"/>
-    </marker>
+    <marker id="punta-gris" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#8b949e"/></marker><marker id="punta-azul" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#58a6ff"/></marker><marker id="punta-rojo" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#f85149"/></marker><marker id="punta-verde" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#3fb950"/></marker><marker id="punta-ambar" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 z" fill="#d29922"/></marker>
   </defs>
 
-  <rect width="1240" height="800" fill="#0d1117"/>
+  <rect width="1280" height="860" fill="#0d1117" data-contenedor="1"/>
 
-  <text x="40" y="46" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="24" font-weight="700">
-    MiniGestor Documental — arquitectura del laboratorio
-  </text>
-  <text x="40" y="72" fill="#8b949e" font-family="system-ui, sans-serif" font-size="14">
-    Un binario, dos políticas de seguridad · todo publicado sobre 127.0.0.1 · datos simulados
-  </text>
+  <text x="40" y="44" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="23" font-weight="700">MiniGestor Documental — arquitectura del laboratorio</text>
+  <text x="40" y="68" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13.5">Un binario, dos políticas de seguridad · todo publicado sobre 127.0.0.1 · datos simulados</text>
 
-  <!-- Host -->
-  <rect x="40" y="110" width="220" height="470" rx="12" fill="#161b22" stroke="#30363d"/>
-  <text x="60" y="140" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Host Linux</text>
-  <text x="60" y="160" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">127.0.0.1 · puertos publicados</text>
-
-  <rect x="60" y="180" width="180" height="90" rx="8" fill="#1c2330" stroke="#30363d"/>
-  <text x="74" y="206" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="13" font-weight="600">Navegador / auditor</text>
-  <text x="74" y="228" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Interacción manual</text>
-  <text x="74" y="246" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Burp · ZAP (proxy)</text>
-
-  <rect x="60" y="288" width="180" height="90" rx="8" fill="#1c2330" stroke="#30363d"/>
-  <text x="74" y="314" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="13" font-weight="600">Suite de ataques</text>
-  <text x="74" y="336" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">curl · sqlmap · hydra</text>
-  <text x="74" y="354" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">attacks/*.sh</text>
-
-  <rect x="60" y="396" width="180" height="90" rx="8" fill="#1c2330" stroke="#30363d"/>
-  <text x="74" y="422" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="13" font-weight="600">Docker CLI</text>
-  <text x="74" y="444" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">compose up · logs</text>
-  <text x="74" y="462" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">evidencias → evidence/</text>
-
-  <text x="60" y="530" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Sin herramientas de</text>
-  <text x="60" y="548" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">seguridad instaladas en el</text>
-  <text x="60" y="566" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">host: todo vive en contenedores</text>
-
-  <!-- lab_net -->
-  <rect x="300" y="110" width="900" height="600" rx="14" fill="#11161d" stroke="#30363d" stroke-dasharray="7 6"/>
-  <text x="322" y="140" fill="#8b949e" font-family="ui-monospace, monospace" font-size="13">lab_net · bridge 172.28.60.0/24 · red aislada del laboratorio</text>
-
-  <!-- app-vuln -->
-  <rect x="330" y="176" width="270" height="170" rx="10" fill="#1f1215" stroke="#f85149" stroke-width="2"/>
-  <text x="350" y="204" fill="#ffb3ae" font-family="system-ui, sans-serif" font-size="15" font-weight="700">app-vuln · :8080</text>
-  <text x="350" y="226" fill="#f0a9a4" font-family="ui-monospace, monospace" font-size="12">MODE=vulnerable</text>
-  <text x="350" y="252" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· MD5 sin sal · cookie plana</text>
-  <text x="350" y="272" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· SQLi · XSS · IDOR</text>
-  <text x="350" y="292" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· documentos en claro</text>
-  <text x="350" y="312" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· /debug/config expuesto</text>
-  <text x="350" y="332" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sin CSP ni límite de intentos</text>
-
-  <!-- gateway -->
-  <rect x="660" y="176" width="250" height="130" rx="10" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
-  <text x="680" y="204" fill="#9ae6b4" font-family="system-ui, sans-serif" font-size="15" font-weight="700">gateway nginx · :443</text>
-  <text x="680" y="228" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· TLS 1.2 / 1.3 (solo cifrados AEAD)</text>
-  <text x="680" y="248" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· HSTS · redirección 301 desde :80</text>
-  <text x="680" y="268" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· limit_req en /login</text>
-  <text x="680" y="288" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">· certificado autofirmado de laboratorio</text>
-
-  <!-- app-hard -->
-  <rect x="660" y="360" width="250" height="190" rx="10" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
-  <text x="680" y="388" fill="#9ae6b4" font-family="system-ui, sans-serif" font-size="15" font-weight="700">app-hard · :8080</text>
-  <text x="680" y="410" fill="#9ae6b4" font-family="ui-monospace, monospace" font-size="12">MODE=hardened</text>
-  <text x="680" y="436" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· Argon2id (19 MiB, t=2, p=1)</text>
-  <text x="680" y="456" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· AES-256-GCM en reposo</text>
-  <text x="680" y="476" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sesión en servidor + HMAC</text>
-  <text x="680" y="496" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· RBAC revalidado · TOTP</text>
-  <text x="680" y="516" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· CSP · auditoría · límite de intentos</text>
-  <text x="680" y="536" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· consultas parametrizadas</text>
-
-  <!-- db -->
-  <rect x="970" y="176" width="210" height="150" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
-  <text x="990" y="204" fill="#a3c9f7" font-family="system-ui, sans-serif" font-size="15" font-weight="700">db · PostgreSQL 16</text>
-  <text x="990" y="230" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sin puerto publicado</text>
-  <text x="990" y="250" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· minigestor_vuln</text>
-  <text x="990" y="270" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· minigestor_hard</text>
-  <text x="990" y="290" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· users · documents</text>
-  <text x="990" y="310" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· sessions · audit_log</text>
-
-  <!-- almacenamiento -->
-  <rect x="970" y="360" width="210" height="130" rx="10" fill="#241a08" stroke="#d29922" stroke-width="2"/>
-  <text x="990" y="388" fill="#f5d78e" font-family="system-ui, sans-serif" font-size="15" font-weight="700">volúmenes /data/docs</text>
-  <text x="990" y="412" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">v1: nombre del cliente</text>
-  <text x="990" y="432" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">v1: contenido en claro</text>
-  <text x="990" y="456" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">v2: nombre opaco (uuid)</text>
-  <text x="990" y="476" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">v2: AES-256-GCM + tag</text>
-
-  <!-- attacker -->
-  <rect x="330" y="400" width="270" height="150" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="1.5"/>
-  <text x="350" y="428" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="15" font-weight="700">attacker · netshoot</text>
-  <text x="350" y="452" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· tcpdump sobre el bridge</text>
-  <text x="350" y="472" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· captura de .pcap</text>
-  <text x="350" y="492" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">· NET_ADMIN / NET_RAW</text>
-  <text x="350" y="512" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">perfil opcional: --profile tools</text>
-  <text x="350" y="532" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">evidencia → evidence/network</text>
-
-  <!-- firewall -->
-  <rect x="330" y="590" width="560" height="80" rx="10" fill="#1c2330" stroke="#30363d" stroke-dasharray="5 4"/>
-  <text x="350" y="618" fill="#e6edf3" font-family="system-ui, sans-serif" font-size="14" font-weight="700">firewall · nftables de referencia (perfil tools)</text>
-  <text x="350" y="642" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">política drop por defecto · solo 443 desde la red del laboratorio · log de intentos rechazados</text>
-
-  <!-- flechas -->
-  <path d="M240 225 L330 235" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#flecha-roja)"/>
-  <text x="244" y="212" fill="#f85149" font-family="ui-monospace, monospace" font-size="11">HTTP :8080</text>
-
-  <path d="M240 250 L660 230" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#flecha-verde)"/>
-  <text x="470" y="252" fill="#3fb950" font-family="ui-monospace, monospace" font-size="11">HTTPS :8443</text>
-
-  <path d="M785 306 L785 360" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#flecha-verde)"/>
-  <text x="795" y="336" fill="#3fb950" font-family="ui-monospace, monospace" font-size="11">proxy_pass</text>
-
-  <path d="M600 300 L600 330 L970 330 L970 300" stroke="#58a6ff" stroke-width="1.6" fill="none" marker-end="url(#flecha)"/>
-  <text x="770" y="326" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">SQL</text>
-
-  <path d="M910 470 L970 440" stroke="#d29922" stroke-width="1.6" fill="none" marker-end="url(#flecha)"/>
-  <text x="912" y="486" fill="#d29922" font-family="ui-monospace, monospace" font-size="11">escritura</text>
-
-  <!-- leyenda -->
-  <rect x="40" y="620" width="240" height="90" rx="10" fill="#161b22" stroke="#30363d"/>
-  <rect x="58" y="640" width="14" height="14" fill="#1f1215" stroke="#f85149" stroke-width="2"/>
-  <text x="82" y="652" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">superficie vulnerable (v1)</text>
-  <rect x="58" y="664" width="14" height="14" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
-  <text x="82" y="676" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">superficie endurecida (v2)</text>
-  <rect x="58" y="688" width="14" height="14" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
-  <text x="82" y="700" fill="#c9d1d9" font-family="system-ui, sans-serif" font-size="12">datos estructurados</text>
-
-  <text x="330" y="700" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">
-    Las dos versiones comparten esquema de base de datos pero no instancia: así las evidencias antes/después no se contaminan.
-  </text>
-  <text x="330" y="722" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">
-    Ningún puerto se publica fuera de 127.0.0.1 y la base de datos no publica puerto alguno.
-  </text>
+  <rect x="40" y="90" width="230" height="520" rx="14" fill="#11161d" stroke="#30363d" stroke-dasharray="7 6" data-contenedor="1"/>
+    <text x="58" y="114" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5">Host Linux · 127.0.0.1</text>
+  <rect x="310" y="90" width="620" height="570" rx="14" fill="#11161d" stroke="#30363d" stroke-dasharray="7 6" data-contenedor="1"/>
+    <text x="330" y="112" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5">lab_net · bridge 172.28.60.0/24 · red aislada</text>
+  <rect x="58" y="132" width="194" height="92" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="76" y="158" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">Navegador / auditor</text>
+    <text x="76" y="182" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">interacción manual</text>
+    <text x="76" y="202" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Burp · ZAP (proxy)</text>
+  <rect x="58" y="236" width="194" height="84" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="76" y="262" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">Suite de ataques</text>
+    <text x="76" y="286" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">curl · sqlmap · hydra</text>
+    <text x="76" y="306" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">attacks/*.sh</text>
+  <rect x="58" y="332" width="194" height="92" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="76" y="358" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">Panel de evidencias</text>
+    <text x="76" y="382" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">ejecuta ataques</text>
+    <text x="76" y="402" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">en vivo desde 18090</text>
+  <text x="58" y="474" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">Sin herramientas de seguridad</text>
+    <text x="58" y="494" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">instaladas en el host: todo</text>
+    <text x="58" y="514" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">vive en contenedores</text>
+  <rect x="334" y="250" width="270" height="220" rx="10" fill="#1f1215" stroke="#f85149" stroke-width="2"/>
+    <text x="352" y="276" fill="#ffb3ae" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">app-vuln · :18080</text>
+    <text x="352" y="296" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">MODE=vulnerable</text>
+    <text x="352" y="318" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">MD5 sin sal</text>
+    <text x="352" y="338" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">cookie usuario:rol</text>
+    <text x="352" y="358" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">SQL concatenado</text>
+    <text x="352" y="378" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">salida sin escapar</text>
+    <text x="352" y="398" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin verificar dueño</text>
+    <text x="352" y="418" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">/debug/config expuesto</text>
+  <rect x="334" y="500" width="270" height="130" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="352" y="526" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">attacker · netshoot</text>
+    <text x="352" y="546" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">captura de tráfico</text>
+    <text x="352" y="568" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">tcpdump sobre el bridge</text>
+    <text x="352" y="588" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">NET_ADMIN / NET_RAW</text>
+    <text x="352" y="608" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">perfil: tools</text>
+  <rect x="650" y="130" width="250" height="120" rx="10" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
+    <text x="668" y="156" fill="#9ae6b4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">gateway nginx · :18443</text>
+    <text x="668" y="176" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">terminación TLS</text>
+    <text x="668" y="198" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">TLS 1.2 / 1.3 · AEAD</text>
+    <text x="668" y="218" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">HSTS · 301 desde :18083</text>
+  <rect x="650" y="280" width="250" height="240" rx="10" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
+    <text x="668" y="306" fill="#9ae6b4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">app-hard · :8080</text>
+    <text x="668" y="326" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">MODE=hardened</text>
+    <text x="668" y="348" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Argon2id (19 MiB, t=2)</text>
+    <text x="668" y="368" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">AES-256-GCM en reposo</text>
+    <text x="668" y="388" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sesión + HMAC-SHA256</text>
+    <text x="668" y="408" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">RBAC revalidado · TOTP</text>
+    <text x="668" y="428" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">CSP · auditoría</text>
+    <text x="668" y="448" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">consultas parametrizadas</text>
+  <rect x="980" y="130" width="290" height="200" rx="10" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+    <text x="998" y="156" fill="#a3c9f7" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">db · PostgreSQL 16</text>
+    <text x="998" y="176" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">solo en lab_net</text>
+    <text x="998" y="198" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sin puerto publicado</text>
+    <text x="998" y="218" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">minigestor_vuln</text>
+    <text x="998" y="238" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">minigestor_hard</text>
+    <text x="998" y="258" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">users · documents</text>
+    <text x="998" y="278" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">sessions · audit_log</text>
+  <rect x="980" y="370" width="290" height="150" rx="10" fill="#241a08" stroke="#d29922" stroke-width="2"/>
+    <text x="998" y="396" fill="#f5d78e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">volúmenes /data/docs</text>
+    <text x="998" y="420" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: nombre del cliente</text>
+    <text x="998" y="440" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v1: contenido en claro</text>
+    <text x="998" y="460" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v2: nombre opaco (uuid)</text>
+    <text x="998" y="480" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">v2: AES-256-GCM + tag</text>
+  <rect x="334" y="686" width="590" height="86" rx="10" fill="#1c2330" stroke="#8b949e" stroke-width="2"/>
+    <text x="352" y="712" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700">firewall · nftables (perfil tools)</text>
+    <text x="352" y="736" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">política drop por defecto · solo 443 desde lab_net</text>
+    <text x="352" y="756" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">registro de intentos rechazados</text>
+  <rect x="40" y="630" width="230" height="150" rx="10" fill="#161b22" stroke="#30363d"/>
+  <text x="58" y="654" fill="#e6edf3" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="700">Leyenda</text>
+  <rect x="58" y="668" width="13" height="13" fill="#1f1215" stroke="#f85149" stroke-width="2"/>
+  <text x="82" y="679" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">superficie vulnerable (v1)</text>
+  <rect x="58" y="692" width="13" height="13" fill="#0f2117" stroke="#3fb950" stroke-width="2"/>
+  <text x="82" y="703" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">superficie endurecida (v2)</text>
+  <rect x="58" y="716" width="13" height="13" fill="#101b2b" stroke="#58a6ff" stroke-width="2"/>
+  <text x="82" y="727" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">datos estructurados</text>
+  <rect x="58" y="740" width="13" height="13" fill="#241a08" stroke="#d29922" stroke-width="2"/>
+  <text x="82" y="751" fill="#c9d1d9" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">almacenamiento de archivos</text>
+  <polyline points="252,378 334,378" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-rojo)"/>
+    <text x="293" y="366" fill="#f85149" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">HTTP</text>
+  <polyline points="252,178 650,178" fill="none" stroke="#3fb950" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-verde)"/>
+    <text x="451" y="166" fill="#3fb950" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">HTTPS</text>
+  <polyline points="775,250 775,280" fill="none" stroke="#3fb950" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-verde)"/>
+    <text x="790" y="268" fill="#3fb950" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">proxy_pass</text>
+  <polyline points="604,430 620,430 620,655 950,655 950,310 980,310" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-azul)"/>
+    <text x="700" y="645" fill="#58a6ff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle">SQL</text>
+  <polyline points="900,400 980,400" fill="none" stroke="#d29922" stroke-width="2" stroke-linejoin="round" marker-end="url(#punta-ambar)"/>
+    <text x="940" y="388" fill="#d29922" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">escritura</text>
+  <polyline points="470,500 470,470" fill="none" stroke="#8b949e" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#punta-gris)"/>
+    <text x="470" y="490" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" text-anchor="middle">captura .pcap</text>
+  <text x="334" y="800" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Las dos versiones comparten esquema de datos pero no instancia: las evidencias antes/después no se contaminan.</text>
+    <text x="334" y="822" fill="#8b949e" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5">Ningún puerto se publica fuera de 127.0.0.1; la base de datos no publica puerto alguno.</text>
 </svg>
