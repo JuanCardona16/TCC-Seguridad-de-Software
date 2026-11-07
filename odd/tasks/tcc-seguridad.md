@@ -56,8 +56,8 @@ que no se resuelve con código.
 | T10 | Documento final Markdown → PDF con la estructura de la actividad (la plantilla oficial depende del tutor) | S1, S5 | inline | `f3390ca` |
 | T11 | Deck de sustentación de 10 min + guion por rol (el video de respaldo lo graba la CIPA) | S5, S8 | inline | `f3390ca` |
 | T12 | Empaquetado del entregable: `scripts/empaquetar.sh` + `CHECKLIST-ENTREGA.md` | S1, S6 | inline | `f3390ca` |
-| T14 | Panel: visor de diagramas con zoom (rueda, arrastre, teclado) para mostrar los diagramas al docente | S6 | inline | pendiente |
-| T15 | Panel: ejecución de ataques en vivo con guardas (lista blanca, solo 127.0.0.1, sin shell, timeout, un proceso a la vez) | S6 | inline | pendiente |
+| T14 | Panel: visor de diagramas con zoom (rueda, arrastre, teclado) para mostrar los diagramas al docente | S6 | inline | `dc3e486` |
+| T15 | Panel: ejecución de ataques en vivo con guardas, verificada de forma independiente y endurecida según los hallazgos | S6 | inline | `dc3e486` |
 | T13 | Escribir al tutor por el avance del 31/10 y pedir plantilla + criterios de rúbrica | S10, S1 | humano | — |
 
 ## Log
@@ -105,3 +105,24 @@ Verificaciones finales:
   `scripts/empaquetar.sh`, que se niega a empaquetar si hay expectativas fallidas.
 - Firewall: ruleset `lab/firewall/lab.nft` cargado y volcado en `evidence/firewall-ruleset.txt`.
 - Seis commits en la rama `feat/tcc-seguridad`.
+
+## Verificación independiente del ejecutor en vivo (2026-11-06)
+
+Se delegó una revisión de seguridad read-only a `gentle-ai-verify` sobre `site/server.py`, el
+`Dockerfile` del panel, el servicio `evidence` y los scripts ejecutables.
+
+Veredicto: **sin ejecución arbitraria de comandos, sin bypass de la lista blanca y sin lectura
+arbitraria de archivos**. Hallazgos de aislamiento y recursos, todos corregidos en `dc3e486`:
+
+| Severidad | Hallazgo | Corrección |
+|---|---|---|
+| Alto | Salida y cuerpo HTTP sin límite; caché compartido entre corridas | Cuerpo ≤ 4 KB (413), salida leída de archivo y recortada a 8 KB, caché por ejecución |
+| Alto | El timeout no mataba procesos hijos | `start_new_session=True` + `SIGKILL` al grupo |
+| Medio | El control de `Host` es falsificable dentro de `lab_net` | Token por proceso sin CORS + `X-Panel-Token` (CSRF / DNS rebinding) |
+| Medio | El proceso corría como root | Usuario `panel` (uid 10001) |
+| Medio | Fugas de rutas internas y tracebacks | Errores al log del contenedor, mensaje genérico al cliente |
+
+Verificación posterior a las correcciones: sin token 403 · token inválido 403 · Host externo 403 ·
+cuerpo 8 KB 413 · id con traversal 400 · ataque de terminal 409 · 01/03/05 en vulnerable `exit 0` ·
+01/06 en endurecido `exit 1` · `id -u` = 10001 · `touch /site/x` falla (rootfs de solo lectura) ·
+`bash attacks/run-all.sh` 18 PASS.
