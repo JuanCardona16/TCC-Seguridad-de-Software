@@ -110,6 +110,10 @@ las evidencias oficiales y muestra la salida real, el código de salida y el ver
 Para los dos últimos el panel muestra el comando exacto a pegar en la terminal. Los diagramas se
 amplían con clic: zoom con la rueda del mouse, arrastre para moverse y `Esc` para cerrar.
 
+El panel abre con la **presentación del proyecto**: el problema, qué se hizo, cómo se hizo, cómo se
+resolvió, los números del trabajo y los integrantes de la CIPA. Después vienen las secciones
+demostrativas: demo en vivo, matriz antes/después, análisis de riesgos, diagramas y reproducción.
+
 Al lanzar una prueba el panel no espera la respuesta completa: la ejecución arranca en el servidor y
 el navegador sigue su avance (`POST /api/run/...` devuelve un `run_id`; `GET /api/run-progress/<id>`
 entrega las fases y las líneas nuevas). Se ven las fases —validando, ejecutando, recolectando,
@@ -136,6 +140,19 @@ Guardas del ejecutor (es un laboratorio local, pero el endpoint ejecuta procesos
 7. Contenedor sin privilegios: usuario `panel` (uid 10001, no root), sistema de archivos de **solo
    lectura**, `cap_drop: [ALL]`, `no-new-privileges`, sin *socket* de Docker y con el repositorio
    montado en `:ro`.
+
+### 3.2 Diagramas generados y verificados
+
+Los diagramas no están dibujados a mano: `docs/diagramas/generar_diagramas.py` los construye con
+layout calculado (bandas, corredores para las flechas y etiquetas ancladas en los canales libres).
+`docs/diagramas/verificar.py` revisa la geometría resultante —texto fuera del lienzo, texto sobre
+texto, texto sobre una caja ajena y flechas que atraviesan cajas— y devuelve código de error si
+encuentra algo.
+
+```bash
+python3 docs/diagramas/generar_diagramas.py   # regenera los dos SVG
+python3 docs/diagramas/verificar.py           # 0 hallazgos = geometría limpia
+```
 
 ## 4. Estructura del repositorio
 

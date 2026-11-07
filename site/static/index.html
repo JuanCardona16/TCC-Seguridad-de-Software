@@ -15,6 +15,7 @@
       <span>Panel de evidencias del TCC · Seguridad Informática 2026-2</span>
     </div>
     <nav class="links">
+      <a href="#proyecto">El proyecto</a>
       <a href="#vivo">Demo en vivo</a>
       <a href="#matriz">Matriz</a>
       <a href="#riesgos">Riesgos</a>
@@ -37,9 +38,82 @@
     <div id="resumen" class="chips"></div>
   </section>
 
+  <section id="proyecto">
+    <div class="section-head reveal">
+      <h2>1 · De qué se trata este proyecto</h2>
+      <span class="etiqueta-proyecto">TCC · Seguridad Informática 2026-2</span>
+    </div>
+
+    <p class="lead reveal">
+      Construimos una aplicación web de gestión documental —<b>MiniGestor Documental</b>— en Rust y la
+      ejecutamos dos veces con el <b>mismo código</b>: una versión deliberadamente insegura y otra
+      endurecida. Sobre las dos corre la misma suite de nueve ataques automatizados. En la primera
+      cada ataque funciona; en la segunda el mismo ataque queda bloqueado. Todo el laboratorio vive en
+      Docker, publicado solo en <code>127.0.0.1</code>, con datos simulados.
+    </p>
+
+    <div class="grid-cards">
+      <article class="card reveal">
+        <h3 class="rojo">El problema</h3>
+        <p>Una aplicación de gestión documental sin controles permite leer documentos de otros
+        usuarios, recuperar credenciales por hashes débiles, escalar privilegios con una cookie
+        falsificada y escribir archivos en el servidor, sin dejar rastro auditable.</p>
+      </article>
+      <article class="card reveal">
+        <h3 class="azul">Qué se hizo</h3>
+        <p>Se diseñó un experimento controlado: un solo binario con dos políticas de seguridad
+        (<code>MODE=vulnerable</code> y <code>MODE=hardened</code>), diez defectos sembrados y trazados a
+        riesgos, nueve ataques automatizados como especificación ejecutable y un panel que muestra el
+        antes y el después.</p>
+      </article>
+      <article class="card reveal">
+        <h3 class="ambar">Cómo se hizo</h3>
+        <p>Análisis de riesgos con MAGERIT v3 y modelado de amenazas con STRIDE; implementación en Rust
+        (axum, sqlx, PostgreSQL); criptografía aplicada (Argon2id, AES-256-GCM, HMAC-SHA256, TOTP,
+        TLS); pentesting con curl, sqlmap, hydra y capturas de tráfico; todo dentro de contenedores.</p>
+      </article>
+      <article class="card reveal">
+        <h3 class="verde">Cómo se resolvió</h3>
+        <p>Cada defecto recibió su control en el mismo archivo: consultas parametrizadas, escape de
+        salida con CSP, Argon2id con sal, sesión opaca firmada con estado en servidor, verificación de
+        propiedad, cifrado en reposo, límite de intentos, segundo factor y auditoría.</p>
+      </article>
+    </div>
+
+    <div class="grid-dos reveal" style="margin-top:22px">
+      <div class="card">
+        <h3>Resultado medido</h3>
+        <div class="numeros">
+          <div><b class="verde">18/18</b><span>expectativas cumplidas</span></div>
+          <div><b>9</b><span>ataques automatizados</span></div>
+          <div><b>12</b><span>riesgos valorados</span></div>
+          <div><b>6</b><span>activos identificados</span></div>
+          <div><b>4</b><span>enfoques del curso</span></div>
+          <div><b>0</b><span>fallos u omisiones</span></div>
+        </div>
+        <p class="note" style="margin-top:12px">
+          Los cuatro enfoques del curso quedan cubiertos: OWASP Top 10, criptografía aplicada,
+          análisis de riesgos MAGERIT y ataques de red con captura de tráfico.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Integrantes de la CIPA</h3>
+        <ul class="equipo">
+          <li><b>Sergio Luis Doria Días</b><span>Líder de proyecto y análisis de riesgos · MAGERIT, arquitectura, STRIDE</span></li>
+          <li><b>Juan David Cardona Bageth</b><span>Desarrollo y endurecimiento · aplicación Rust, criptografía, sesiones, TOTP</span></li>
+          <li><b>Christian David Traeger Gamero</b><span>Pentesting y evidencias · suite de ataques, capturas, panel, sustentación</span></li>
+        </ul>
+        <p class="note" style="margin-top:12px">
+          El informe completo del trabajo está en <code>docs/informe/TCC-seguridad-informatica.pdf</code>;
+          esta página resume y demuestra lo que ese documento sostiene.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section id="vivo">
     <div class="section-head">
-      <h2>0 · Demostración en vivo</h2>
+      <h2>2 · Demostración en vivo</h2>
       <span class="etiqueta-vivo">ataques reales, sin resultados simulados</span>
     </div>
     <p class="note">
@@ -86,7 +160,7 @@
 
   <section id="matriz">
     <div class="section-head">
-      <h2>1 · Matriz antes / después</h2>
+      <h2>3 · Matriz antes / después</h2>
       <div class="filtros" id="filtros">
         <button class="filtro activo" data-filtro="todos">Todos</button>
         <button class="filtro" data-filtro="vulnerable">Vulnerable</button>
@@ -124,7 +198,7 @@
   </section>
 
   <section id="riesgos">
-    <h2>2 · Análisis de riesgos (MAGERIT v3)</h2>
+    <h2>4 · Análisis de riesgos (MAGERIT v3)</h2>
     <p class="note" id="riesgos-meta"></p>
 
     <div class="grid-dos">
@@ -163,7 +237,7 @@
   </section>
 
   <section id="diagramas">
-    <h2>3 · Diagramas</h2>
+    <h2>5 · Diagramas</h2>
     <p class="note">Clic en un diagrama para ampliarlo: rueda del mouse o botones para hacer zoom, arrastrar para moverlo, <code>Esc</code> para cerrar.</p>
     <div class="grid-dos">
       <figure>
@@ -178,7 +252,7 @@
   </section>
 
   <section id="reproducir">
-    <h2>4 · Cómo se reproduce</h2>
+    <h2>6 · Cómo se reproduce</h2>
     <pre class="comando">docker compose up -d --build          # laboratorio: base, app v1, app v2 y gateway TLS
 bash attacks/run-all.sh               # ejecuta los nueve ataques y regenera las evidencias
 docker compose restart evidence       # refresca este panel con los resultados nuevos</pre>

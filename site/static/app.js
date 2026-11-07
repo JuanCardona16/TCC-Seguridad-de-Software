@@ -208,7 +208,8 @@ function mostrarVeredicto(instantanea, lineas) {
       <span class="sello">${esc(final ? final.texto : "SIN VEREDICTO")}</span>
       <span class="medido">exit ${esc(instantanea.exit_code)} · ${segundos} s reales · modo ${esc(instantanea.modo)}</span>
     </div>
-    <p class="note">Ese tiempo es el real del ataque. El revelado fue más lento a propósito.</p>`;
+    <p class="note">Ese tiempo es el real del ataque. El revelado fue más lento a propósito.</p>
+    ${renderEvidencia(instantanea.evidencia)}`;
 }
 
 function limpiarVivo() {
@@ -322,6 +323,68 @@ async function seguirEjecucion(runId) {
 
     await esperar(state.saltar ? 80 : 240);
   }
+}
+
+function renderEvidencia(evidencia) {
+  if (!evidencia) return "";
+
+  const fuente = evidencia.fuente
+    ? `<span class="fuente">fuente: ${esc(evidencia.fuente)}</span>`
+    : "";
+  const nota = evidencia.nota
+    ? `<p class="evidencia-nota">${esc(evidencia.nota)}</p>`
+    : "";
+
+  let cuerpo = "";
+  if (evidencia.tipo === "tabla") {
+    const columnas = (evidencia.columnas || [])
+      .map((c) => `<th>${esc(c)}</th>`)
+      .join("");
+    const filas = (evidencia.filas || [])
+      .map(
+        (fila) =>
+          `<tr>${fila
+            .map((celda) => {
+              const texto = String(celda ?? "");
+              const clase = /^[0-9a-f]{32}$|^\$argon2|…$/.test(texto.trim())
+                ? "celda-hash"
+                : /^\d+$/.test(texto.trim())
+                  ? "celda-num"
+                  : "";
+              return `<td class="${clase}">${esc(texto)}</td>`;
+            })
+            .join("")}</tr>`
+      )
+      .join("");
+    cuerpo = (evidencia.filas || []).length
+      ? `<div class="table-wrap"><table class="tabla-evidencia"><thead><tr>${columnas}</tr></thead><tbody>${filas}</tbody></table></div>`
+      : `<p class="evidencia-vacia">Sin filas: el control detuvo la prueba.</p>`;
+  } else if (evidencia.tipo === "documento") {
+    const campos = (evidencia.campos || [])
+      .map(([k, v]) => `<div class="kv"><b>${esc(k)}</b>${esc(v)}</div>`)
+      .join("");
+    const contenido = evidencia.contenido
+      ? `<pre class="documento-texto">${esc(evidencia.contenido)}</pre>`
+      : `<p class="evidencia-vacia">El servidor no entregó el contenido.</p>`;
+    cuerpo = `<div class="grid-campos">${campos}</div>${contenido}`;
+  } else if (evidencia.tipo === "codigo") {
+    cuerpo = `<pre class="codigo-evidencia">${esc(evidencia.codigo || "")}</pre>`;
+  } else {
+    cuerpo = `<p class="evidencia-vacia">${esc(evidencia.sub || "")}</p>`;
+  }
+
+  const clase = evidencia.denegado ? "denegado" : "expuesto";
+  return `<section class="evidencia-card ${clase}">
+    <header>
+      <div>
+        <h4>${esc(evidencia.titulo || "Evidencia")}</h4>
+        <p class="evidencia-sub">${esc(evidencia.sub || "")}</p>
+      </div>
+      ${fuente}
+    </header>
+    ${cuerpo}
+    ${nota}
+  </section>`;
 }
 
 function conectarRitmo() {
@@ -657,7 +720,31 @@ function activarFiltros() {
   conectarRitmo();
 }
 
+function activarReveal() {
+  document.documentElement.classList.add("js");
+  const elementos = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window)) {
+    elementos.forEach((e) => e.classList.add("visible"));
+    return;
+  }
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      entradas.forEach((entrada) => {
+        if (!entrada.isIntersecting) return;
+        entrada.target.classList.add("visible");
+        observador.unobserve(entrada.target);
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+  );
+  elementos.forEach((elemento, indice) => {
+    elemento.style.transitionDelay = `${Math.min(indice % 4, 3) * 90}ms`;
+    observador.observe(elemento);
+  });
+}
+
 async function iniciar() {
+  activarReveal();
   activarFiltros();
   conectarLightbox();
   await cargarToken();

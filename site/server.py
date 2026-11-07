@@ -29,6 +29,7 @@ no hay interpretación de metacaracteres.
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import re
@@ -147,6 +148,7 @@ class Ejecucion:
         self.exit_code: int | None = None
         self.duracion_ms: int | None = None
         self.lineas: list[dict] = []
+        self.evidencia: dict | None = None
         self._lock = threading.Lock()
 
     def fase_nueva(self, fase: str, texto: str) -> None:
@@ -180,6 +182,7 @@ class Ejecucion:
                 "total_lineas": total,
                 "lineas": self.lineas[max(0, desde) :],
                 "truncado": total >= MAX_LINEAS,
+                "evidencia": self.evidencia,
             }
 
 
@@ -263,6 +266,9 @@ def _correr(ejecucion: Ejecucion) -> None:
         ejecucion.exit_code = codigo
         ejecucion.duracion_ms = int((time.time() - ejecucion.inicio) * 1000)
 
+        ejecucion.fase_nueva("recolectando", "Extrayendo la evidencia visible de la respuesta cruda")
+        ejecucion.evidencia = extraer_evidencia(ejecucion.ident, trabajo, ejecucion)
+
         ejecucion.fase_nueva("interpretando", "Interpretando el resultado contra la expectativa del modo")
         if codigo == 0:
             ejecucion.publicar(
@@ -288,6 +294,228 @@ def _correr(ejecucion: Ejecucion) -> None:
     finally:
         shutil.rmtree(trabajo, ignore_errors=True)
         _ejecutando.release()
+
+
+def _leer(ruta: Path, limite: int = 200_000) -> str:
+    try:
+        return ruta.read_text(encoding="utf-8", errors="replace")[:limite]
+    except FileNotFoundError:
+        return ""
+
+
+def _evidencia_tabla(titulo, sub, fuente, columnas, filas, nota="") -> dict:
+    return {
+        "tipo": "tabla",
+        "titulo": titulo,
+        "sub": sub,
+        "fuente": fuente,
+        "columnas": columnas,
+        "filas": filas,
+        "nota": nota,
+    }
+
+
+def _evidencia_documento(titulo, sub, fuente, campos, contenido, denegado=False) -> dict:
+    return {
+        "tipo": "documento",
+        "titulo": titulo,
+        "sub": sub,
+        "fuente": fuente,
+        "campos": campos,
+        "contenido": contenido,
+        "denegado": denegado,
+    }
+
+
+def extraer_evidencia(ident: str, trabajo: Path, ejecucion: "Ejecucion") -> dict | None:
+    """Convierte la salida cruda del ataque en evidencia legible para mostrar.
+
+    Todo sale de los archivos que el propio script guardó en su directorio
+    temporal o de sus líneas de salida: no se inventa ningún dato.
+    """
+    lineas = [linea["texto"] for linea in ejecucion.lineas]
+
+    if ident == "01-sqli-search":
+        crudo = _leer(trabajo / "01-sqli-search.html")
+        filas = [
+            [html.unescape(usuario), html.unescape(hash_expuesto)]
+            for usuario, hash_expuesto in re.findall(
+                r'<a href="/docs/\d+">([^<]+)</a></td><td>[^<]*</td><td>([^<]*)</td>', crudo
+            )
+        ]
+        if not filas:
+            return _evidencia_tabla(
+                "La búsqueda no devolvió filas ajenas",
+                "La consulta parametrizada trató el payload como texto plano",
+                "01-sqli-search.html",
+                ["Usuario filtrado", "Hash expuesto"],
+                [],
+                "En el modo endurecido el UNION SELECT no se interpreta como SQL.",
+            )
+
+        filas_hash = [
+            fila for fila in filas if re.fullmatch(r"[0-9a-f]{32}|\$argon2.*", fila[1] or "")
+        ]
+        documentos = len(filas) - len(filas_hash)
+        if not filas_hash:
+            return _evidencia_tabla(
+                "La búsqueda devolvió documentos ajenos",
+                "El payload amplió el resultado más allá de los documentos del usuario",
+                "01-sqli-search.html",
+                ["Documento filtrado", "Archivo expuesto"],
+                filas,
+                "No se obtuvieron hashes: la tabla users no quedó expuesta por esta vía.",
+            )
+        return _evidencia_tabla(
+            "Usuarios y hashes que devolvió la búsqueda inyectada",
+            "El payload UNION SELECT agregó la tabla users al resultado",
+            "01-sqli-search.html",
+            ["Usuario filtrado", "Hash expuesto"],
+            filas_hash,
+            f"Además se filtraron {documentos} documentos ajenos en la misma respuesta."
+            if documentos
+            else "Cada fila es un usuario del sistema con su hash de contraseña.",
+        )
+
+    if ident == "02-xss-stored":
+        crudo = _leer(trabajo / "02-dashboard.html")
+        encontrado = re.search(r"<script[^>]*>.{0,80}?</script>", crudo, re.S)
+        if encontrado:
+            return {
+                "tipo": "codigo",
+                "titulo": "El título del documento se renderizó como HTML",
+                "sub": "Esto es lo que el navegador ejecuta al abrir el panel",
+                "fuente": "02-dashboard.html",
+                "codigo": encontrado.group(0),
+                "nota": "El script quedó guardado en la base y se ejecuta en el navegador de cada visitante.",
+            }
+        escapado = re.search(r"&lt;script&gt;.{0,90}", crudo, re.S)
+        return {
+            "tipo": "codigo",
+            "titulo": "El título salió escapado",
+            "sub": "El escape de salida convierte el script en texto inerte",
+            "fuente": "02-dashboard.html",
+            "codigo": (escapado.group(0) if escapado else "(sin coincidencias en la respuesta)"),
+            "nota": "En el modo endurecido el navegador lo muestra como texto, no lo ejecuta.",
+        }
+
+    if ident == "03-idor":
+        crudo = _leer(trabajo / "03-idor-doc1.html")
+        if "Acceso denegado" in crudo:
+            return _evidencia_documento(
+                "El documento ajeno quedó bloqueado",
+                "El servidor verificó la propiedad del recurso antes de leerlo",
+                "03-idor-doc1.html",
+                [("Propietario real", "alice"), ("Solicitante", "bob"), ("Resultado", "HTTP 403 · denegado")],
+                "",
+                denegado=True,
+            )
+        titulo = re.search(r"<h1>([^<]+)</h1>", crudo)
+        duenio = re.search(r"<b>Dueño</b>([^<]*)</div>", crudo)
+        contenido = re.search(r"<pre>(.*?)</pre>", crudo, re.S)
+        return _evidencia_documento(
+            "Documento confidencial leído sin permiso",
+            f"bob abrió /docs/1, que pertenece a {(duenio.group(1).strip() if duenio else 'otro usuario')}",
+            "03-idor-doc1.html",
+            [
+                ("Título", html.unescape(titulo.group(1)) if titulo else "—"),
+                ("Propietario", duenio.group(1).strip() if duenio else "—"),
+                ("Clasificación", "confidencial"),
+                ("Resultado", "HTTP 200 · contenido servido"),
+            ],
+            html.unescape(contenido.group(1)).strip() if contenido else "",
+        )
+
+    if ident == "04-bruteforce":
+        filas = [
+            [intento, codigo, "sin límite" if codigo != "429" else "bloqueado"]
+            for intento, codigo in re.findall(
+                r"intento (\d+) con contrasena incorrecta -> HTTP (\d+)", "\n".join(lineas)
+            )
+        ]
+        return _evidencia_tabla(
+            "Intentos de autenticación con contraseña incorrecta",
+            "Cada fila es una petición POST /login real",
+            "salida del script",
+            ["Intento", "HTTP", "Resultado"],
+            filas,
+            "Sin límite de intentos, la cuenta se puede atacar indefinidamente."
+            if filas and filas[-1][2] == "sin límite"
+            else "El límite de intentos cortó la prueba: la cuenta se bloquea temporalmente.",
+        )
+
+    if ident == "05-session-forgery":
+        crudo = _leer(trabajo / "05-admin-forjado.html")
+        filas = [
+            [usuario, rol, docs, fallos]
+            for usuario, rol, docs, fallos in re.findall(
+                r"<td>([^<]+)</td><td>([^<]+)</td><td>(\d+)</td><td>(\d+)</td>", crudo
+            )
+        ]
+        if not filas:
+            return _evidencia_tabla(
+                "La cookie forjada no abrió el panel",
+                "La sesión firmada no valida y el rol se revalida en el servidor",
+                "05-admin-forjado.html",
+                ["Usuario", "Rol", "Documentos", "Intentos fallidos"],
+                [],
+                "Con `sid=alice:admin` el servidor endurecido redirige al login.",
+            )
+        return _evidencia_tabla(
+            "Panel de administración abierto con una cookie inventada",
+            "Se envió `sid=alice:admin` sin conocer ninguna contraseña",
+            "05-admin-forjado.html",
+            ["Usuario", "Rol", "Documentos", "Intentos fallidos"],
+            filas,
+            "Toda la tabla se sirvió a un cliente que solo copió un texto en la cookie.",
+        )
+
+    if ident == "06-weak-hash":
+        hashes = {}
+        craqueados = {}
+        for linea in lineas:
+            hallado = re.match(r"^\s+(\S+) -> (\S+)$", linea)
+            if hallado:
+                hashes[hallado.group(1)] = hallado.group(2)
+                continue
+            roto = re.match(r"^\s+CRACKEADO: (\S+):(.+)$", linea)
+            if roto:
+                craqueados[roto.group(1)] = roto.group(2)
+
+        filas = []
+        for usuario, valor in hashes.items():
+            recortado = valor if len(valor) <= 36 else f"{valor[:33]}…"
+            filas.append([usuario, recortado, craqueados.get(usuario, "no recuperada")])
+        return _evidencia_tabla(
+            "Hashes almacenados y contraseñas recuperadas",
+            "Diccionario de diez palabras ejecutado contra los hashes de la base",
+            "salida del script",
+            ["Usuario", "Hash almacenado", "Contraseña recuperada"],
+            filas,
+            "Argon2id no cede a ese diccionario: cada intento cuesta 19 MiB de memoria."
+            if filas and all(not _ for _ in craqueados) 
+            else "MD5 sin sal se revierte en menos de un segundo por contraseña.",
+        )
+
+    if ident == "08-headers":
+        filas = []
+        for linea in lineas:
+            presente = re.search(r"presente: (\S+)", linea)
+            ausente = re.search(r"AUSENTE:\s+(\S+)", linea)
+            if presente:
+                filas.append([presente.group(1), "presente"])
+            elif ausente:
+                filas.append([ausente.group(1), "AUSENTE"])
+        return _evidencia_tabla(
+            "Cabeceras de seguridad de la respuesta",
+            "Leídas de la respuesta HTTP de la portada",
+            "08-headers.txt",
+            ["Cabecera", "Estado"],
+            filas,
+            "Sin CSP ni X-Frame-Options el navegador no aplica ninguna defensa extra.",
+        )
+
+    return None
 
 
 class Handler(SimpleHTTPRequestHandler):
