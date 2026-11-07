@@ -177,3 +177,158 @@ figcaption { color: var(--muted); font-size: 12.5px; margin-bottom: 10px; }
 figure img { width: 100%; height: auto; display: block; border-radius: 7px; }
 
 footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding: 18px 0 40px; margin-top: 40px; }
+
+/* ------------------------------------------- demostración en vivo (ataques) */
+
+.etiqueta-vivo {
+  margin-left: auto;
+  font: 700 11px/1 ui-monospace, monospace;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #9ae6b4;
+  border: 1px solid #20573a;
+  background: #0f2117;
+  padding: 6px 12px;
+  border-radius: 99px;
+}
+
+.live-layout { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: start; }
+@media (max-width: 900px) { .live-layout { grid-template-columns: 1fr; } }
+
+.lista-botones { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.boton-ataque {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 11px;
+  color: var(--txt);
+  font: 600 12.5px/1.3 inherit;
+  cursor: pointer;
+}
+.boton-ataque:hover { border-color: var(--acc); }
+.boton-ataque .flecha { color: var(--acc); font-size: 13px; }
+.boton-ataque small { display: block; color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }
+
+.panel-vivo { min-height: 240px; }
+.panel-vivo-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.panel-vivo-head h3 { margin: 0; }
+.ghost-mini {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font: 600 11px/1 inherit;
+  cursor: pointer;
+}
+
+.corriendo { color: var(--warn); font: 600 13px/1.4 ui-monospace, monospace; }
+.corriendo::before {
+  content: "";
+  display: inline-block;
+  width: 9px; height: 9px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--warn);
+  animation: pulso 1s infinite;
+}
+@keyframes pulso { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+
+.barra-resultado { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 4px 0 10px; }
+.veredicto-vivo {
+  font: 800 12px/1 ui-monospace, monospace;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+}
+.veredicto-vivo.exito { background: #4a1d1f; border-color: #f85149; color: #ffb3ae; }
+.veredicto-vivo.bloqueado { background: #0f2f1b; border-color: #3fb950; color: #9ae6b4; }
+.veredicto-vivo.raro { background: #241a08; border-color: #d29922; color: #f5d78e; }
+.explicacion { color: var(--muted); font-size: 12.5px; }
+.comando-sugerido { margin-top: 10px; }
+.comando-sugerido code { display: inline-block; margin-top: 4px; }
+
+.nota-aviso {
+  border-left: 3px solid var(--warn);
+  padding: 8px 0 8px 14px;
+  color: #e8d9a8;
+  font-size: 12.5px;
+  margin-top: 16px;
+}
+
+/* ------------------------------------------- visor de diagramas con zoom */
+
+figure img.ampliable { cursor: zoom-in; }
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(4, 8, 13, 0.95);
+  display: flex;
+  flex-direction: column;
+}
+.lightbox.oculto { display: none; }
+
+.lb-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.lb-titulo { font-weight: 700; font-size: 14px; }
+.lb-acciones { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.lb-btn {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  border-radius: 7px;
+  min-width: 34px;
+  height: 32px;
+  font: 700 14px/1 ui-monospace, monospace;
+  cursor: pointer;
+}
+.lb-btn:hover { border-color: var(--acc); }
+.cerrar-lb { font-size: 19px; }
+.lb-zoom {
+  min-width: 58px;
+  text-align: center;
+  color: var(--muted);
+  font: 600 12px/1 ui-monospace, monospace;
+}
+
+.lb-lienzo {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+}
+.lb-lienzo.arrastrando { cursor: grabbing; }
+.lb-lienzo img {
+  max-width: 92%;
+  max-height: 88%;
+  transform-origin: center center;
+  transition: transform 60ms linear;
+  user-select: none;
+  background: #0d1117;
+  border-radius: 8px;
+}
+.lb-lienzo.arrastrando img { transition: none; }
+.lb-pie {
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font: 600 11.5px/1 ui-monospace, monospace;
+  text-align: center;
+  background: var(--panel);
+}

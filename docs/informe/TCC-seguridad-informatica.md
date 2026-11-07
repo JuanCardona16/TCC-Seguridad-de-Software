@@ -74,6 +74,7 @@ Implementar mecanismos de seguridad informática en una aplicación web de gesti
 - El análisis MAGERIT es una aplicación metodológica en escala 1–5, no una entrega completa del método (no incluye análisis de dependencias entre activos ni valoración económica).
 - El firewall (nftables) se documenta como política de referencia ejecutada en un contenedor propio; no sustituye un cortafuegos perimetral real.
 - La aplicación no implementa firma digital de documentos, antivirus de archivos cargados ni federación de identidad: son trabajo futuro declarado.
+- Siete de los nueve ataques se ejecutan desde el panel de evidencias; los dos que requieren privilegios del host (path traversal y captura de tráfico) se ejecutan con el comando que el panel indica.
 - Los secretos incluidos (clave maestra, secreto de sesión, contraseñas demo) son **valores de laboratorio** y su exposición forma parte del ejercicio de auditoría.
 
 ## 4. Marco teórico
@@ -313,9 +314,50 @@ Ninguna de las dos correcciones tocó el comportamiento de seguridad buscado. El
 | Salida literal de cada ataque por modo | `evidence/http/<modo>/<ataque>.log` |
 | Respuestas HTTP crudas | `evidence/http/<modo>/*.html` |
 | Capturas de tráfico (HTTP en claro / TLS) | `evidence/network/09-http.pcap`, `09-tls.pcap` |
-| Panel interactivo | `http://127.0.0.1:18090` |
+| Panel interactivo (consulta y ejecución en vivo) | `http://127.0.0.1:18090` |
 | Diagramas | `docs/diagramas/*.svg` |
 | Inventario de riesgos | `docs/riesgos/magerit.yml` |
+
+### 8.5 Demostración en vivo desde el panel
+
+Para que el docente pueda presenciar las vulnerabilidades en lugar de leer sobre ellas, el panel de
+evidencias incorpora un **ejecutor de pruebas**: cada fila de la matriz tiene un botón que lanza el
+ataque real contra el modo que se elija y devuelve la salida del script, el código de salida y la
+interpretación del resultado.
+
+La consecuencia práctica es que la sustentación no depende de recordar comandos ni de la pericia de
+quien escribe en la terminal: se hace clic, se ve la salida y se explica. Siete de los nueve ataques
+se ejecutan así; los otros dos (path traversal y captura de tráfico) requieren privilegios sobre el
+host —inspeccionar el sistema de archivos del contenedor o capturar paquetes con `NET_ADMIN`— y el
+panel muestra el comando exacto para correrlos en la terminal, sin ocultar la limitación.
+
+**Guardas del ejecutor.** Un endpoint que ejecuta procesos es, en sí mismo, una superficie de
+ataque. La versión final se sometió a una **verificación de seguridad independiente** (revisión
+read-only del código y de la configuración del contenedor) que confirmó la ausencia de ejecución
+arbitraria de comandos y de bypass de la lista blanca, y señaló debilidades de aislamiento y de
+consumo de recursos. Todas se corrigieron antes de la entrega:
+
+| Hallazgo de la verificación | Corrección aplicada |
+|---|---|
+| El control de `Host` es falsificable: no autentica el origen | Token por proceso (`/api/token` sin CORS + `X-Panel-Token`), que una página de otro origen no puede leer (CSRF / DNS rebinding) |
+| Salida y cuerpo de petición sin límite | Cuerpo acotado a 4 KB (413) y salida leída desde archivo, recortada a 8 KB |
+| El timeout no cerraba los procesos hijos | `start_new_session=True` y `SIGKILL` al grupo de procesos completo |
+| Caché compartido entre ejecuciones | Caché de cookies por ejecución dentro del directorio temporal |
+| El proceso corría como `root` | Usuario sin privilegios (`panel`, uid 10001) |
+| Fuga de rutas internas y tracebacks | Los errores se registran en el contenedor y al cliente solo se devuelve un mensaje genérico |
+
+Las restricciones que quedaron implementadas son:
+
+1. Token de sesión por proceso + solo `Host` `127.0.0.1`/`localhost`.
+2. Lista blanca de ataques y patrón estricto del identificador; argumentos en lista, sin shell.
+3. Modo validado contra un diccionario cerrado, con destinos fijos del laboratorio.
+4. Una ejecución simultánea, timeout con muerte del grupo de procesos y salida acotada.
+5. Directorio temporal y caché propios de cada ejecución, eliminados al terminar.
+6. Contenedor sin privilegios: usuario no root, sistema de archivos de solo lectura, `cap_drop: ALL`,
+   `no-new-privileges`, repositorio en `:ro` y sin *socket* de Docker.
+
+Los ataques en vivo no sobrescriben las evidencias oficiales: escriben en un directorio temporal, de
+modo que la matriz que se presenta sigue siendo la de la última corrida completa de la suite.
 
 ## 9. Discusión
 

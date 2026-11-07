@@ -15,6 +15,7 @@
       <span>Panel de evidencias del TCC · Seguridad Informática 2026-2</span>
     </div>
     <nav class="links">
+      <a href="#vivo">Demo en vivo</a>
       <a href="#matriz">Matriz</a>
       <a href="#riesgos">Riesgos</a>
       <a href="#diagramas">Diagramas</a>
@@ -31,9 +32,42 @@
       Nueve ataques ejecutados contra dos modos del mismo binario. En el modo
       <strong class="v">vulnerable</strong> cada ataque funciona; en el modo
       <strong class="h">endurecido</strong> el mismo ataque queda bloqueado. Esta página se
-      genera desde <code>evidence/results.json</code>: no hay resultados escritos a mano.
+      genera desde <code>evidence/results.json</code> y puede lanzar las pruebas en vivo.
     </p>
     <div id="resumen" class="chips"></div>
+  </section>
+
+  <section id="vivo">
+    <div class="section-head">
+      <h2>0 · Demostración en vivo</h2>
+      <span class="etiqueta-vivo">ataques reales, sin resultados simulados</span>
+    </div>
+    <p class="note">
+      Elegí un ataque y ejecutalo primero contra el modo <b>vulnerable</b> (el defecto debe
+      funcionar) y después contra el <b>endurecido</b> (el ataque debe quedar bloqueado).
+      Cada ejecución corre el mismo script que produce las evidencias oficiales.
+    </p>
+    <div class="live-layout">
+      <div class="card catalogo">
+        <h3>Ataques ejecutables desde el panel</h3>
+        <div id="catalogo" class="lista-botones"></div>
+        <p class="note" id="catalogo-nota"></p>
+      </div>
+      <div class="card panel-vivo">
+        <div class="panel-vivo-head">
+          <h3 id="vivo-titulo">Resultado en vivo</h3>
+          <button class="ghost-mini" id="vivo-limpiar">limpiar</button>
+        </div>
+        <div id="vivo-cuerpo">
+          <p class="note">Todavía no ejecutaste ninguna prueba. Elegí un ataque de la izquierda.</p>
+        </div>
+      </div>
+    </div>
+    <p class="nota-aviso">
+      El modo endurecido limita a 5 los inicios de sesión por minuto en el mismo usuario y bloquea
+      la cuenta 5 minutos tras 5 fallos: si una prueba devuelve <code>429</code>, es el control
+      funcionando. Esperá un minuto y volvé a intentar.
+    </p>
   </section>
 
   <section id="matriz">
@@ -45,7 +79,10 @@
         <button class="filtro" data-filtro="endurecido">Endurecido</button>
       </div>
     </div>
-    <p class="note">Clic en un veredicto para ver la salida real de la prueba.</p>
+    <p class="note">
+      Clic en un veredicto para ver la salida guardada · <b>▶</b> ejecuta la prueba en vivo ·
+      <b>⌘</b> indica que la prueba se corre desde la terminal.
+    </p>
     <div class="table-wrap">
       <table id="tabla-ataques">
         <thead>
@@ -113,14 +150,15 @@
 
   <section id="diagramas">
     <h2>3 · Diagramas</h2>
+    <p class="note">Clic en un diagrama para ampliarlo: rueda del mouse o botones para hacer zoom, arrastrar para moverlo, <code>Esc</code> para cerrar.</p>
     <div class="grid-dos">
       <figure>
         <figcaption>Arquitectura del laboratorio</figcaption>
-        <img src="data/diagramas/arquitectura.svg" alt="Diagrama de arquitectura del laboratorio">
+        <img class="ampliable" src="data/diagramas/arquitectura.svg" alt="Diagrama de arquitectura del laboratorio">
       </figure>
       <figure>
         <figcaption>Flujo de datos y amenazas (STRIDE)</figcaption>
-        <img src="data/diagramas/dfd-stride.svg" alt="Diagrama de flujo de datos con amenazas STRIDE">
+        <img class="ampliable" src="data/diagramas/dfd-stride.svg" alt="Diagrama de flujo de datos con amenazas STRIDE">
       </figure>
     </div>
   </section>
@@ -140,6 +178,24 @@ docker compose restart evidence       # refresca este panel con los resultados n
     uso exclusivamente académico
   </footer>
 </main>
+
+<!-- Visor de diagramas con zoom -->
+<div id="lightbox" class="lightbox oculto" role="dialog" aria-modal="true" aria-label="Visor de diagramas">
+  <div class="lb-barra">
+    <span id="lb-titulo" class="lb-titulo">Diagrama</span>
+    <div class="lb-acciones">
+      <button class="lb-btn" id="lb-menos" title="Alejar">−</button>
+      <span class="lb-zoom" id="lb-zoom">100 %</span>
+      <button class="lb-btn" id="lb-mas" title="Acercar">+</button>
+      <button class="lb-btn" id="lb-reset" title="Tamaño original">1:1</button>
+      <button class="lb-btn cerrar-lb" id="lb-cerrar" title="Cerrar (Esc)">×</button>
+    </div>
+  </div>
+  <div class="lb-lienzo" id="lb-lienzo">
+    <img id="lb-imagen" alt="Diagrama ampliado" draggable="false">
+  </div>
+  <div class="lb-pie">rueda del mouse para zoom · arrastrar para mover · doble clic para restablecer</div>
+</div>
 
 <script src="app.js"></script>
 </body>

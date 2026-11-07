@@ -56,6 +56,8 @@ que no se resuelve con código.
 | T10 | Documento final Markdown → PDF con la estructura de la actividad (la plantilla oficial depende del tutor) | S1, S5 | inline | `f3390ca` |
 | T11 | Deck de sustentación de 10 min + guion por rol (el video de respaldo lo graba la CIPA) | S5, S8 | inline | `f3390ca` |
 | T12 | Empaquetado del entregable: `scripts/empaquetar.sh` + `CHECKLIST-ENTREGA.md` | S1, S6 | inline | `f3390ca` |
+| T14 | Panel: visor de diagramas con zoom (rueda, arrastre, teclado) para mostrar los diagramas al docente | S6 | inline | pendiente |
+| T15 | Panel: ejecución de ataques en vivo con guardas (lista blanca, solo 127.0.0.1, sin shell, timeout, un proceso a la vez) | S6 | inline | pendiente |
 | T13 | Escribir al tutor por el avance del 31/10 y pedir plantilla + criterios de rúbrica | S10, S1 | humano | — |
 
 ## Log

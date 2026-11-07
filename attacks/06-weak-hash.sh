@@ -4,9 +4,17 @@ source "$(dirname "$0")/lib.sh" "$@"
 
 if [ "$mode" = "vulnerable" ]; then db=minigestor_vuln; else db=minigestor_hard; fi
 out="$EVIDENCE_DIR/06-hashes.txt"
+consulta="SELECT username, password_hash FROM users ORDER BY id"
 
-if ! compose exec -T db psql -U lab -d "$db" -At -F'|' \
-        -c "SELECT username, password_hash FROM users ORDER BY id" > "$out" 2>/dev/null; then
+# Dos caminos para leer la base, la misma prueba:
+#   - desde el host: `docker compose exec` contra el contenedor de PostgreSQL
+#   - desde el panel de evidencias: `psql` directo con DB_DSN (esquema de laboratorio)
+if [ -n "${DB_DSN:-}" ] && command -v psql >/dev/null 2>&1; then
+    if ! psql "$DB_DSN" -At -F'|' -c "$consulta" > "$out" 2>/dev/null; then
+        say "No se pudo leer la base con DB_DSN"
+        exit 2
+    fi
+elif ! compose exec -T db psql -U lab -d "$db" -At -F'|' -c "$consulta" > "$out" 2>/dev/null; then
     say "No se pudo leer la base (¿esta levantado el laboratorio?)"
     exit 2
 fi

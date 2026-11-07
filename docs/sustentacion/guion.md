@@ -51,33 +51,31 @@ Mostrar: diapositiva 4 (arquitectura), 6 (STRIDE) y 7 (tabla de riesgos).
 
 Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:18090`.
 
-1. **Panel** — mostrar la matriz: nueve ataques, verde en vulnerable (el ataque funcionó), verde en
-   endurecido (el ataque fue bloqueado). «Verde en las dos columnas significa cosas opuestas: por eso
-   el veredicto se compara contra la expectativa.»
+> La demo se hace **desde el panel**, no desde la terminal: se aprieta ▶, se ve la salida real y se
+> explica. La terminal queda como alternativa si algo falla.
 
-2. **IDOR** (30 s):
-   ```bash
-   bash attacks/03-idor.sh http://127.0.0.1:18080 vulnerable   # exit 0
-   bash attacks/03-idor.sh https://127.0.0.1:18443 hardened     # exit 1
-   ```
-   > «En el modo vulnerable, Bob lee el contrato confidencial de Alice. En el endurecido, el servidor
-   > verifica la propiedad del recurso y responde 403, además de registrar el intento en la auditoría.»
+1. **Panel** — mostrar la matriz: verde en la columna vulnerable (el ataque funcionó) y verde en la
+   columna endurecido (el ataque fue bloqueado). «Verde en las dos columnas significa cosas opuestas:
+   por eso el veredicto se compara contra la expectativa.»
 
-3. **La cookie es el permiso** (30 s): mostrar la petición con `Cookie: sid=alice:admin` y el panel
-   administrativo abierto en v1; luego la redirección al login en v2.
+2. **IDOR** (40 s): en la fila 03, ▶ en la columna vulnerable → `exit 0`, «bob leyó un documento
+   confidencial de alice». Luego ▶ en la columna endurecido → `exit 1`, «el servidor verificó la
+   propiedad del recurso». Señalar que cada ejecución guarda su propio directorio temporal y no toca
+   las evidencias oficiales.
 
-4. **Hash débil** (45 s):
-   ```bash
-   bash attacks/06-weak-hash.sh http://127.0.0.1:18080 vulnerable
-   bash attacks/06-weak-hash.sh https://127.0.0.1:18443 hardened
-   ```
-   > «Tres contraseñas recuperadas con un diccionario de diez palabras. Con Argon2id, cada intento
-   > cuesta 19 MiB de memoria: el mismo diccionario no encuentra nada.»
+3. **La cookie es el permiso** (40 s): fila 05, ▶ en vulnerable → panel administrativo; ▶ en
+   endurecido → firma inválida. «El servidor confiaba en un valor que el cliente controla.»
 
-5. **Tráfico en claro** (30 s): abrir `evidence/network/09-http.pcap` en Wireshark (filtro `http`),
-   señalar la contraseña legible; abrir `09-tls.pcap` y mostrar que no hay texto legible.
+4. **El hash es el eslabón débil** (50 s): fila 06, ▶ en vulnerable → tres contraseñas recuperadas con
+   un diccionario de diez palabras; ▶ en endurecido → Argon2id no cede. «Cada intento cuesta 19 MiB de
+   memoria: eso es lo que hace inviable el ataque a escala.»
 
-6. **Refrescar la matriz** (15 s): `bash attacks/run-all.sh` → 18 PASS.
+5. **Tráfico en claro** (40 s): fila 09 muestra ⌘ (requiere la terminal). Correr el comando que el
+   panel indica y abrir `evidence/network/09-http.pcap` en Wireshark con el filtro `http`: la
+   contraseña se lee. Abrir `09-tls.pcap`: no hay texto legible.
+
+6. **Refrescar** (15 s): `bash attacks/run-all.sh` en la terminal → 18 PASS, y `docker compose restart
+   evidence` si quieren ver la fecha de la corrida actualizada.
 
 > **Plan B:** si falla la red, el proyector o Docker, reproducir el video de la demo
 > (`evidence/demo.mp4`) y continuar con el panel, que funciona sin la suite.
@@ -125,6 +123,7 @@ xdg-open docs/sustentacion/slides.html       # diapositivas (F = pantalla comple
 
 - [ ] Los cinco contenedores en estado `Up` (`docker compose ps`).
 - [ ] Panel abierto y con fecha de la última corrida visible.
+- [ ] Probado al menos un ataque con el botón ▶ en los dos modos (verifica que el ejecutor en vivo responde).
 - [ ] Wireshark con los dos `.pcap` ya abiertos y filtrados (no improvisar en vivo).
 - [ ] Video de respaldo descargado en el equipo, no solo en la nube.
 - [ ] Terminal con fuente grande (mínimo 16 pt) y fondo oscuro.
@@ -142,6 +141,7 @@ xdg-open docs/sustentacion/slides.html       # diapositivas (F = pantalla comple
 | ¿Qué pasa si el atacante tiene acceso a la base de datos? | Con Argon2id obtiene hashes costosos de atacar y los documentos están cifrados con una clave que no vive en la base. Con MD5 obtenía las contraseñas en segundos. |
 | ¿Este sistema es seguro ahora? | Es sustancialmente más seguro frente a los nueve ataques probados. Un pentest completo y las recomendaciones del informe (CSRF explícito, anti-repetición de TOTP, análisis de archivos, SIEM) completarían el trabajo. |
 | ¿Por qué el riesgo residual de contraseñas sigue en medio? | Porque ningún hash protege de una contraseña predecible: la mitigación real es la política de contraseñas y el segundo factor, que ya está implementado. |
+| ¿El panel no es peligroso, si ejecuta comandos? | El ejecutor es local y está acotado: solo responde a `127.0.0.1`, tiene lista blanca de siete ataques, valida el modo, lanza un proceso a la vez con timeout, corre sin shell, exige un token que otra página no puede leer, monta el repositorio en solo lectura y no tiene acceso al socket de Docker; el proceso corre como usuario sin privilegios y el hallazgo de la verificación independiente está documentado en el informe.  Los dos ataques que necesitan privilegios del host no se ejecutan desde el panel: se muestran con su comando. |
 | ¿Corrieron esto contra sistemas reales? | No. Todo el tráfico se genera en una red Docker aislada y solo se publica en 127.0.0.1. Atacar sistemas de la universidad sería un delito según la Ley 1273 de 2009. |
 
 ---

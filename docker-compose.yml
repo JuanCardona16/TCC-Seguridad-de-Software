@@ -143,10 +143,28 @@ services:
       context: ./site
     image: tcc-seguridad/evidence:latest
     container_name: tcc-evidence
+    environment:
+      REPO_ROOT: /repo
+      # Ataques en vivo: mismo esquema de laboratorio, objetivos dentro de lab_net.
+      TARGET_VULN: http://app-vuln:8080
+      TARGET_HARD: https://gateway
+      DB_DSN_VULN: postgres://lab:${POSTGRES_PASSWORD:-lab}@db:5432/minigestor_vuln
+      DB_DSN_HARD: postgres://lab:${POSTGRES_PASSWORD:-lab}@db:5432/minigestor_hard
     ports:
       - "127.0.0.1:18090:8000"
     volumes:
       - ./:/repo:ro
+      # Los datos generados del panel viven en un volumen propio: el resto del
+      # sistema de archivos del contenedor es de solo lectura.
+      - evidence_data:/site/static/data
+    # Endurecimiento del contenedor: sistema de archivos de solo lectura, sin
+    # capacidades, sin escalada de privilegios y con escritura solo en tmpfs.
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
     networks: [lab_net]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/healthz.txt')"]
@@ -156,6 +174,7 @@ services:
     logging: *default-logging
 
 volumes:
+  evidence_data:
   pgdata:
   docs_vuln:
   docs_hard:
