@@ -326,7 +326,16 @@ ataque real contra el modo que se elija y devuelve la salida del script, el cód
 interpretación del resultado.
 
 La consecuencia práctica es que la sustentación no depende de recordar comandos ni de la pericia de
-quien escribe en la terminal: se hace clic, se ve la salida y se explica. Siete de los nueve ataques
+quien escribe en la terminal: se hace clic, se ve la salida y se explica. La ejecución se sigue en vivo: el servidor publica la fase
+en curso —validando el objetivo, ejecutando el script, recolectando la evidencia, interpretando el
+resultado— y las líneas de salida a medida que el script las escribe, con spinner, marca de tiempo
+real, efecto de tipeo, barra de progreso y sello del veredicto.
+
+**Sobre la honestidad del ritmo.** Un ataque real tarda entre 50 y 300 ms: sin mediación, el docente
+vería un resultado instantáneo y no un proceso. El panel separa ambas cosas de forma explícita: la
+marca de tiempo de cada línea es la real del servidor, la duración total real medida se muestra al
+final, y el retardo del revelado se declara en la interfaz como ritmo didáctico, ajustable en tres
+velocidades y con un botón para saltarlo. Así se gana legibilidad sin falsear ninguna medición. Siete de los nueve ataques
 se ejecutan así; los otros dos (path traversal y captura de tráfico) requieren privilegios sobre el
 host —inspeccionar el sistema de archivos del contenedor o capturar paquetes con `NET_ADMIN`— y el
 panel muestra el comando exacto para correrlos en la terminal, sin ocultar la limitación.
@@ -358,6 +367,13 @@ Las restricciones que quedaron implementadas son:
 
 Los ataques en vivo no sobrescriben las evidencias oficiales: escriben en un directorio temporal, de
 modo que la matriz que se presenta sigue siendo la de la última corrida completa de la suite.
+
+El diseño técnico de la transmisión es deliberadamente simple: no se usa *streaming* ni *websockets*,
+sino un identificador de ejecución con consulta periódica (`POST /api/run/<ataque>` → `run_id`;
+`GET /api/run-progress/<run_id>?desde=N` → líneas nuevas). El servidor lee el archivo de salida del
+proceso cada 40 ms y publica solo líneas completas, con un tope de 400 líneas por ejecución y un
+registro de las últimas 20 corridas. Con eso el panel funciona incluso si el navegador se recarga a
+mitad de una prueba.
 
 ## 9. Discusión
 

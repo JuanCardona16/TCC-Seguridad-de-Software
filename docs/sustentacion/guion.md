@@ -53,6 +53,10 @@ Preparación previa: laboratorio levantado y panel abierto en `http://127.0.0.1:
 
 > La demo se hace **desde el panel**, no desde la terminal: se aprieta ▶, se ve la salida real y se
 > explica. La terminal queda como alternativa si algo falla.
+>
+> Antes de empezar, dejá el ritmo en **Calmo**: el panel muestra las fases (validando → ejecutando →
+> recolectando → interpretando) y las líneas de salida con tiempo real. Si vas con el tiempo justo,
+> pasá a **Rápido** o usá «ver todo ya».
 
 1. **Panel** — mostrar la matriz: verde en la columna vulnerable (el ataque funcionó) y verde en la
    columna endurecido (el ataque fue bloqueado). «Verde en las dos columnas significa cosas opuestas:

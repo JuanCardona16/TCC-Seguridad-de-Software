@@ -110,6 +110,16 @@ las evidencias oficiales y muestra la salida real, el código de salida y el ver
 Para los dos últimos el panel muestra el comando exacto a pegar en la terminal. Los diagramas se
 amplían con clic: zoom con la rueda del mouse, arrastre para moverse y `Esc` para cerrar.
 
+Al lanzar una prueba el panel no espera la respuesta completa: la ejecución arranca en el servidor y
+el navegador sigue su avance (`POST /api/run/...` devuelve un `run_id`; `GET /api/run-progress/<id>`
+entrega las fases y las líneas nuevas). Se ven las fases —validando, ejecutando, recolectando,
+interpretando— con spinner, marca de tiempo real, efecto de tipeo en la salida, barra de progreso y
+sello del veredicto al cierre.
+
+El ataque real tarda milisegundos: **el ritmo del revelado es didáctico** y se ajusta con los botones
+`Calmo / Normal / Rápido` (se recuerda en el navegador). La duración real medida se muestra al final,
+y hay un botón «ver todo ya» para saltar las animaciones.
+
 Guardas del ejecutor (es un laboratorio local, pero el endpoint ejecuta procesos):
 
 1. **Token de sesión por proceso**: el panel pide `/api/token` (sin CORS, no cacheable) y lo envía
