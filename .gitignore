@@ -1,0 +1,20 @@
+# Secretos locales
+.env
+
+# Artefactos de Rust
+target/
+app/target/
+
+# Evidencias generadas (se regeneran con la suite de ataques)
+evidence/results.json
+evidence/results.jsonl
+evidence/network/*.pcap
+evidence/screenshots/*.png
+
+# Certificados de laboratorio
+lab/gateway/tls/
+
+# Sistema
+.DS_Store
+*.swp
+__pycache__/

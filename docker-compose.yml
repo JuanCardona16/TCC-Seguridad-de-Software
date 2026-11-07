@@ -1,0 +1,152 @@
+name: tcc-seguridad
+
+# =============================================================================
+# MiniGestor Documental — laboratorio de seguridad (TCC Seguridad Informática)
+#
+# ADVERTENCIA: el servicio `app-vuln` implementa una aplicación DELIBERADAMENTE
+# VULNERABLE, construida como material académico. Todos los puertos se publican
+# SOLO en 127.0.0.1. Nunca expongas estos contenedores en una red pública ni
+# apuntes la suite de ataques a sistemas que no sean este laboratorio.
+# =============================================================================
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: tcc-db
+    environment:
+      POSTGRES_USER: lab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lab}
+      POSTGRES_DB: lab
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./lab/initdb:/docker-entrypoint-initdb.d:ro
+    # Sin puertos publicados: la base solo es alcanzable dentro de lab_net.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lab -d lab"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [lab_net]
+    logging: *default-logging
+
+  app-vuln:
+    build:
+      context: ./app
+    image: tcc-seguridad/minigestor:latest
+    container_name: tcc-vuln
+    environment:
+      MODE: vulnerable
+      BIND: 0.0.0.0:8080
+      DATABASE_URL: postgres://lab:${POSTGRES_PASSWORD:-lab}@db:5432/minigestor_vuln
+      DOCS_DIR: /data/docs
+      # Clave MAESTRA de LABORATORIO (32 bytes = 64 hex). En producción vive en un KMS/secret manager.
+      DOCS_MASTER_KEY: ${DOCS_MASTER_KEY:-8f2b6d1c4a9e7f305b8c2d6a1e9f4b7c3d5a8e2f6b1c9d4a7e3f5b8c2d6a1e9f}
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret-vulnerable}
+      PUBLIC_BASE_URL: http://127.0.0.1:18080
+      RUST_LOG: info,tower_http=info
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - docs_vuln:/data/docs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [lab_net]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *default-logging
+
+  app-hard:
+    image: tcc-seguridad/minigestor:latest
+    container_name: tcc-hard
+    environment:
+      MODE: hardened
+      BIND: 0.0.0.0:8080
+      DATABASE_URL: postgres://lab:${POSTGRES_PASSWORD:-lab}@db:5432/minigestor_hard
+      DOCS_DIR: /data/docs
+      DOCS_MASTER_KEY: ${DOCS_MASTER_KEY:-8f2b6d1c4a9e7f305b8c2d6a1e9f4b7c3d5a8e2f6b1c9d4a7e3f5b8c2d6a1e9f}
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret-hardened}
+      PUBLIC_BASE_URL: https://127.0.0.1:18443
+      RUST_LOG: info,tower_http=info
+    ports:
+      # Acceso directo sin TLS, para comparar en las pruebas.
+      - "127.0.0.1:18091:8080"
+    volumes:
+      - docs_hard:/data/docs
+    depends_on:
+      db:
+        condition: service_healthy
+      app-vuln:
+        condition: service_started
+    networks: [lab_net]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *default-logging
+
+  gateway:
+    build:
+      context: ./lab/gateway
+    image: tcc-seguridad/gateway:latest
+    container_name: tcc-gateway
+    ports:
+      - "127.0.0.1:18443:443"
+      - "127.0.0.1:18083:80"
+    depends_on:
+      app-hard:
+        condition: service_started
+    networks: [lab_net]
+    logging: *default-logging
+
+  # Herramientas de red y ataque. Perfil opcional: docker compose --profile tools up
+  attacker:
+    image: nicolaka/netshoot:latest
+    container_name: tcc-attacker
+    profiles: ["tools"]
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./evidence/network:/ev
+    networks: [lab_net]
+    logging: *default-logging
+
+  # Firewall perimetral del laboratorio (T9).
+  firewall:
+    image: alpine:3.20
+    container_name: tcc-firewall
+    profiles: ["tools"]
+    cap_add:
+      - NET_ADMIN
+    command: ["sh", "-c", "apk add --no-cache nftables && nft -f /etc/nftables/lab.nft && sleep infinity"]
+    volumes:
+      - ./lab/firewall:/etc/nftables:ro
+    networks: [lab_net]
+    logging: *default-logging
+
+volumes:
+  pgdata:
+  docs_vuln:
+  docs_hard:
+
+networks:
+  # Red aislada: sin acceso a Internet desde los servicios del laboratorio.
+  lab_net:
+    driver: bridge
+    internal: false
+    ipam:
+      config:
+        - subnet: 172.28.60.0/24

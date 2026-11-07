@@ -1,0 +1,41 @@
+#!/usr/sbin/nft -f
+# Conjunto de reglas de referencia del laboratorio (T9).
+#
+# ALCANCE HONESTO: este contenedor aplica las reglas en SU propio namespace de
+# red. No es un cortafuegos perimetral real de Docker (para eso se necesita el
+# modo host o un firewall dedicado). Su función en el TCC es documentar la
+# política de filtrado que sí se aplica en la arquitectura: publicar solo
+# 127.0.0.1, cerrar todo lo que no sea el gateway TLS y registrar los intentos
+# de conexión rechazados.
+
+flush ruleset
+
+table inet lab {
+    set bloqueos {
+        type ipv4_addr
+        flags dynamic, timeout
+        timeout 10m
+    }
+
+    chain entrada {
+        type filter hook input priority filter; policy drop;
+
+        ct state established,related accept
+        ct state invalid drop
+        iif "lo" accept
+
+        # Diagnóstico controlado desde la red del laboratorio.
+        icmp type echo-request accept
+
+        # Solo el gateway TLS puede alcanzar la aplicación endurecida.
+        ip saddr 172.28.60.0/24 tcp dport 443 accept
+
+        # Todo lo demás se registra y se descarta.
+        limit rate 10/minute log prefix "lab-drop: " level warn
+        counter drop
+    }
+
+    chain salida {
+        type filter hook output priority filter; policy accept;
+    }
+}
